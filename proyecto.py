@@ -11,7 +11,7 @@ from pathlib import Path;
 """
 
 """
-ruta = Path(__file__).parent / 'eatclick-1-firebase-adminsdk-1zv5v-3b3b3b3b3b.json';
+ruta = Path(__file__).parent / 'proyectopython-4d75d-firebase-adminsdk-4z47o-42798a8811.json';
 print(ruta);
 
 firebase_sdk = credentials.Certificate(ruta)
