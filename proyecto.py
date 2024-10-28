@@ -4,8 +4,17 @@ import firebase_admin;
 from firebase_admin import credentials;
 from firebase_admin import firestore;
 
+from pathlib import Path;
+
 # * Cargar las credenciales de firebase desde el JSON
-firebase_sdk = credentials.Certificate('ProyectoPython/proyectopython-4d75d-firebase-adminsdk-4z47o-42798a8811.json')
+
+"""
+
+"""
+ruta = Path(__file__).parent / 'proyectopython-4d75d-firebase-adminsdk-4z47o-42798a8811.json';
+print(ruta);
+
+firebase_sdk = credentials.Certificate(ruta)
 # * Iniciar la app con las credenciales
 firebase_admin.initialize_app(firebase_sdk);
 
@@ -30,3 +39,4 @@ for producto in productos:
 print(data_productos);
 
 db.close();
+
