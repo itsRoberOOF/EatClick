@@ -1,3 +1,25 @@
+"""
+(sepa qué es esto)
+"""
+
+from proyecto.py import Py
+from proyecto.uxx.boxlayout import BoxLayout
+
+class ProductsApp(App):
+    def build(self):
+        return BoxLayout(
+            orientation='vertical',
+            padding=20,
+            spacing=10
+        )
+
+if __name__ == '__main__':
+    ProductsApp().run()
+
+
+## Aquí termina eso (lo saqué de la basura, nunca he usado eso)
+
+
 
 # ! Importacion de librerias para conectar con firebase
 import firebase_admin;
