@@ -1,0 +1,32 @@
+#:kivy 1.10
+#-*- coding: utf-8 -*-
+
+#Ventanas declaradas
+#:import Factory kivy.factory.Factory
+WindowManager:
+	FirstWindow:
+	SecondWindow:
+
+#Portada
+
+<FirstWindow>:
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: "Bienvenido a la App de Productos"
+            size_hint_y: None
+            height: dp(40)
+        Button:
+            text: "Ver Productos"
+            size_hint: (1, 0.1)
+            on_release: 
+				app.root.current = "second"
+				root.manager.transition.direction = "right"
+<SecondWindow>:
+    name: "second"
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: "Lista de Productos"
+            size_hint_y: None
+            height: dp(40)
