@@ -1,2 +1,4 @@
 1 - Firebase
 pip install firebase-admin
+2 - kivy
+python -m pip install "kivy[base]" kivy_examples
