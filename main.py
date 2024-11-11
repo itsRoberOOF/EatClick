@@ -1,9 +1,12 @@
 from kivy.app import App  # Importa la clase base para crear una aplicación Kivy.
 from kivy.uix.screenmanager import ScreenManager, Screen  # Maneja múltiples pantallas.
 from kivy.lang import Builder  # Permite cargar archivos de diseño (.kv).
-from kivy.uix.boxlayout import BoxLayout  # Importa un contenedor con disposición vertical u horizontal.
+from kivy.uix.boxlayout import BoxLayout   # Importa un contenedor con disposición vertical u horizontal.
 from kivy.uix.button import Button  # Importa un botón para la interfaz.
 from kivy.uix.label import Label  # Importa una etiqueta de texto.
+from kivy.uix.image import Image, CoreImage
+
+import io
 
 # ! Importacion de librerias para conectar con firebase
 import firebase_admin;
@@ -13,53 +16,12 @@ from firebase_admin import firestore;
 # ! Importacion de libreria para manejo de archivos
 from pathlib import Path;
 
-# Define nuestras diferentes pantallas
-#Define our different screens
-class FirstWindow(Screen):
-	pass
-
-class SecondWindow(Screen):
-     def on_enter(self):
-        self.clear_widgets()  # Limpia los widgets actuales
-        layout = BoxLayout(orientation='vertical')
-
-        # Agregar un producto a la lista 
-        productos = [
-            {"nombre": "Manzana", "precio": 1.50},
-            {"nombre": "Pan", "precio": 0.80},
-            {"nombre": "Leche", "precio": 1.20},
-            {"nombre": "Huevo", "precio": 2.00}
-        ]
-
-        # Mostrar productos con botones para seleccionar
-        for producto in productos:
-            nombre = producto['nombre']
-            precio = producto['precio']
-            boton = Button(text=f"{nombre} - ${precio:.2f}", size_hint=(1, 0.1))
-            layout.add_widget(boton)
-
-        self.add_widget(layout)
-
-# Gestor de pantallas
-class WindowManager(ScreenManager):
-    pass
-
-# Designar archivo de diseño .kv
-kv = Builder.load_file('main.kv')
-
-class Eatclick(App):
-    def build(self):
-        return kv
-
-if __name__ == '__main__':
-    Eatclick().run()
-
 """
 ? Path(__file__).parent → Obtiene la ruta del archivo de python que se esta ejecutando
 
 A esa ruta se le anexa el nombre del archivo JSON para obtener la ruta completa
 """
-ruta = Path(__file__).parent / 'proyectopython-4d75d-firebase-adminsdk-4z47o-42798a8811.json';
+ruta = Path(__file__).parent / 'proyectopython-4d75d-firebase-adminsdk-4z47o-67a889441f.json';
 
 # Se usa la ruta del archivo JSON para cargar las credenciales
 firebase_sdk = credentials.Certificate(ruta)
@@ -76,25 +38,67 @@ db = firestore.client();
 Crea un objeto de firestore que almacena todos los productos
 """
 
-productos = db.collection('productos').stream();
+categorias = db.collection('categorias').stream();
 
-print(productos);
+print(categorias);
 
-# * Se crea una lista vacia para almacenar los productos
-data_productos = [];
+# * Se crea una lista vacia para almacenar las categorías
+data_categorias = [];
 
-# * Se iteran los productos para guardar su informacion, además se convierte el objeto a un diccionario
-for producto in productos:
-    info_producto = producto.to_dict();
-    info_producto['id'] = producto.id;
-    data_productos.append(info_producto);
+# * Se iteran las categorías para guardar su informacion, además se convierte el objeto a un diccionario
+for categoria in categorias:
+    info_categoria = categoria.to_dict();
+    info_categoria['id'] = categoria.id;
+    data_categorias.append(info_categoria);
 
-print(data_productos);
+print(data_categorias);
 
-# Prueba con imagenes
-prueba = storage.bucket();
-blob = prueba.get_blob("papas.jpg");
-print(blob);
+# ! Variable para acceder al storage de firebase
+almacenamiento_imagenes = storage.bucket();
 
-# * Se cierra la conexion
-db.close();
+# Define nuestras diferentes pantallas
+#Define our different screens
+class FirstWindow(Screen):
+	pass
+
+class SecondWindow(Screen):
+    def on_enter(self):
+        self.clear_widgets();  # Limpia los widgets actuales
+        layout = BoxLayout(orientation='vertical');
+
+        # Mostrar productos con botones para seleccionar
+        for categoria in data_categorias:
+            nombre = categoria['nombre_categoria'];
+            imagen = categoria.get('imagen_categoria', None);
+            boton_layout = BoxLayout(orientation='horizontal');
+            widget_imagen = None;
+            if imagen != None:
+                blob = almacenamiento_imagenes.blob(imagen).download_as_bytes();
+                bytes = io.BytesIO(blob);
+                img = CoreImage(bytes, ext='png').texture;
+                print(f"Esta es la imagen {img}");
+                widget_imagen = Image(texture=img, size_hint=(0.3, 1), allow_stretch=True, keep_ratio=False);
+
+            if widget_imagen != None:
+                boton_layout.add_widget(widget_imagen);
+            boton = Button(text=f"{nombre}", size_hint=(0.7, 1));
+            boton_layout.add_widget(boton);
+
+            layout.add_widget(boton_layout);
+
+        self.add_widget(layout);
+
+# Gestor de pantallas
+class WindowManager(ScreenManager):
+    pass
+
+# Designar archivo de diseño .kv
+kv = Builder.load_file('main.kv')
+
+class Eatclick(App):
+    def build(self):
+        return kv
+
+if __name__ == '__main__':
+    Eatclick().run()
+
