@@ -1,7 +1,7 @@
 from kivy.app import App  # Importa la clase base para crear una aplicación Kivy.
 from kivy.uix.screenmanager import ScreenManager, Screen  # Maneja múltiples pantallas.
 from kivy.lang import Builder  # Permite cargar archivos de diseño (.kv).
-from kivy.uix.boxlayout import BoxLayout   # Importa un contenedor con disposición vertical u horizontal.
+from kivy.uix.gridlayout import GridLayout   # Importa un contenedor con disposición vertical u horizontal.
 from kivy.uix.button import Button  # Importa un botón para la interfaz.
 from kivy.uix.label import Label  # Importa una etiqueta de texto.
 from kivy.uix.image import Image, CoreImage
@@ -64,13 +64,13 @@ class FirstWindow(Screen):
 class SecondWindow(Screen):
     def on_enter(self):
         self.clear_widgets();  # Limpia los widgets actuales
-        layout = BoxLayout(orientation='vertical');
+        layout = GridLayout(cols=3);
 
         # Mostrar productos con botones para seleccionar
         for categoria in data_categorias:
             nombre = categoria['nombre_categoria'];
             imagen = categoria.get('imagen_categoria', None);
-            boton_layout = BoxLayout(orientation='horizontal');
+            boton_layout = GridLayout(rows= 4);
             widget_imagen = None;
             if imagen != None:
                 blob = almacenamiento_imagenes.blob(imagen).download_as_bytes();
