@@ -1,22 +1,16 @@
 from kivy.app import App  # Importa la clase base para crear una aplicación Kivy.
 from kivy.uix.screenmanager import ScreenManager, Screen  # Maneja múltiples pantallas.
 from kivy.lang import Builder  # Permite cargar archivos de diseño (.kv).
-from kivy.uix.gridlayout import GridLayout   # Importa un contenedor con disposición vertical u horizontal.
 from kivy.uix.button import Button  # Importa un botón para la interfaz.
-from kivy.uix.label import Label  # Importa una etiqueta de texto.
 from kivy.uix.image import Image, CoreImage
 from kivy.core.window import Window  # Importar la clase Window
 from kivy.uix.boxlayout import BoxLayout
-
-from kivy.graphics import Color
-from kivy.graphics import Rectangle
 
 import api
 
 Window.size = (400, 600)  # Ancho: 400, Alto: 300
 
 # Define nuestras diferentes pantallas
-#Define our different screens
 class FirstWindow(Screen):
     def enviar_nombre(self):
         # Accede al texto del TextInput
@@ -30,6 +24,9 @@ class SecondWindow(Screen):
         self.ids.nombre_label.text = f"{nombre}";
         
     def on_enter(self):
+        scrollview = self.ids.layout.parent  # Parent del GridLayout es el ScrollView
+        scroll_y = scrollview.scroll_y  # Guardar posición actual del scroll
+        
         # Limpiar widgets previos
         self.ids.layout.clear_widgets() # Limpia los widgets actuales
 
@@ -40,28 +37,31 @@ class SecondWindow(Screen):
         for categoria in data_categorias:
             nombre = categoria['nombre_categoria'];
             imagen = categoria['imagen'];
-            boton_layout = BoxLayout(orientation='vertical', size_hint=(1,None), height=200);
-            
-            with boton_layout.canvas.before:
-                Color(16/255, 67/255, 110/255, 1)
-                Rectangle(pos=boton_layout.pos, size=boton_layout.size)
-            boton_layout.bind(pos=lambda instance, value: setattr(instance.canvas.before.children[-1], 'pos', value))
-            boton_layout.bind(size=lambda instance, value: setattr(instance.canvas.before.children[-1], 'size', value))
-            widget_imagen = None;
-            if imagen != None:
-                img = CoreImage(imagen, ext='png').texture;
-                widget_imagen = Image(texture=img, size_hint=(1, 0.7), allow_stretch=True, keep_ratio=False);
 
-            if widget_imagen != None:
-                boton_layout.add_widget(widget_imagen); 
+            boton_layout = BoxLayout(orientation="vertical");
 
-            label = Label(text=nombre, size_hint=(1, 0.2), halign='center', valign='middle', text_size=(None, None));
-            boton_layout.add_widget(label);
+            if(imagen!=None):
+                img = CoreImage(imagen, ext="png").texture;
+                widget_imagen = Image(source = "loguito.png", size_hint=(1,0.7), allow_stretch=True, keep_ratio=False);
+                widget_imagen.texture = img;
+                widget_imagen.text = nombre;
+                widget_imagen.bind(on_touch_down=lambda instance, touch, nombre=nombre: self.boton_presionado(instance, touch, nombre))
+                boton_layout.add_widget(widget_imagen);
+
+            boton = Button(text=f"{nombre}",size_hint=(1,0.3),background_normal="", background_down="", background_color=(16/255, 67/255, 110/255, 1));
+            boton.bind(on_press=lambda instance, nombre=nombre: self.boton_presionado(instance, None, nombre))
+            boton_layout.add_widget(boton);
+
             self.ids.layout.add_widget(boton_layout)
-    
-    def on_button_press(self, instance):
-        # Esta función se ejecutará cuando se presione el botón
-        print(f"Botón presionado: {instance.text}")
+
+        scrollview.scroll_y = scroll_y
+            
+    def boton_presionado(self, instance, touch, nombre):
+        if touch:
+            if not instance.collide_point(*touch.pos):
+                return  
+
+        print(f"Botón o imagen presionados: {nombre}")
 
 # Gestor de pantallas
 class WindowManager(ScreenManager):
