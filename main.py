@@ -5,91 +5,67 @@ from kivy.uix.gridlayout import GridLayout   # Importa un contenedor con disposi
 from kivy.uix.button import Button  # Importa un botón para la interfaz.
 from kivy.uix.label import Label  # Importa una etiqueta de texto.
 from kivy.uix.image import Image, CoreImage
+from kivy.core.window import Window  # Importar la clase Window
+from kivy.uix.boxlayout import BoxLayout
 
-import io
+from kivy.graphics import Color
+from kivy.graphics import Rectangle
 
-# ! Importacion de librerias para conectar con firebase
-import firebase_admin;
-from firebase_admin import credentials, storage;
-from firebase_admin import firestore;
+import api
 
-# ! Importacion de libreria para manejo de archivos
-from pathlib import Path;
-
-"""
-? Path(__file__).parent → Obtiene la ruta del archivo de python que se esta ejecutando
-
-A esa ruta se le anexa el nombre del archivo JSON para obtener la ruta completa
-"""
-ruta = Path(__file__).parent / 'proyectopython-4d75d-firebase-adminsdk-4z47o-67a889441f.json';
-
-# Se usa la ruta del archivo JSON para cargar las credenciales
-firebase_sdk = credentials.Certificate(ruta)
-
-# Iniciar la app con las credenciales
-firebase_admin.initialize_app(firebase_sdk, { 'storageBucket' : 'proyectopython-4d75d.appspot.com' });
-
-# * Conexión con la base
-db = firestore.client();
-
-""" 
-? db.collection('productos').stream() → Obtiene todos los documentos de la coleccion productos
-
-Crea un objeto de firestore que almacena todos los productos
-"""
-
-categorias = db.collection('categorias').stream();
-
-print(categorias);
-
-# * Se crea una lista vacia para almacenar las categorías
-data_categorias = [];
-
-# * Se iteran las categorías para guardar su informacion, además se convierte el objeto a un diccionario
-for categoria in categorias:
-    info_categoria = categoria.to_dict();
-    info_categoria['id'] = categoria.id;
-    data_categorias.append(info_categoria);
-
-print(data_categorias);
-
-# ! Variable para acceder al storage de firebase
-almacenamiento_imagenes = storage.bucket();
+Window.size = (400, 600)  # Ancho: 400, Alto: 300
 
 # Define nuestras diferentes pantallas
 #Define our different screens
 class FirstWindow(Screen):
-	pass
+    def enviar_nombre(self):
+        # Accede al texto del TextInput
+        nombre = self.ids.nombre_input.text
+        # Pasa el nombre a la segunda pantalla
+        self.manager.get_screen("second").actualizar_label(nombre)
 
 class SecondWindow(Screen):
+    def actualizar_label(self, nombre):
+        # Actualiza el texto del Label en la pantalla 2
+        self.ids.nombre_label.text = f"{nombre}";
+        
     def on_enter(self):
-        self.clear_widgets();  # Limpia los widgets actuales
-        layout = GridLayout(cols=3);
+        # Limpiar widgets previos
+        self.ids.layout.clear_widgets() # Limpia los widgets actuales
+
+        data_categorias = api.leer_coleccion('categorias');
+        data_categorias = api.imagenes_coleccion(data_categorias);
 
         # Mostrar productos con botones para seleccionar
         for categoria in data_categorias:
             nombre = categoria['nombre_categoria'];
-            imagen = categoria.get('imagen_categoria', None);
-            boton_layout = GridLayout(rows= 4);
+            imagen = categoria['imagen'];
+            boton_layout = BoxLayout(orientation='vertical', size_hint=(1,None), height=200);
+            
+            with boton_layout.canvas.before:
+                Color(16/255, 67/255, 110/255, 1)
+                Rectangle(pos=boton_layout.pos, size=boton_layout.size)
+            boton_layout.bind(pos=lambda instance, value: setattr(instance.canvas.before.children[-1], 'pos', value))
+            boton_layout.bind(size=lambda instance, value: setattr(instance.canvas.before.children[-1], 'size', value))
             widget_imagen = None;
             if imagen != None:
-                blob = almacenamiento_imagenes.blob(imagen).download_as_bytes();
-                bytes = io.BytesIO(blob);
-                img = CoreImage(bytes, ext='png').texture;
-                print(f"Esta es la imagen {img}");
-                widget_imagen = Image(texture=img, size_hint=(0.3, 1), allow_stretch=True, keep_ratio=False);
+                img = CoreImage(imagen, ext='png').texture;
+                widget_imagen = Image(texture=img, size_hint=(1, 0.7), allow_stretch=True, keep_ratio=False);
 
             if widget_imagen != None:
-                boton_layout.add_widget(widget_imagen);
-            boton = Button(text=f"{nombre}", size_hint=(0.7, 1));
-            boton_layout.add_widget(boton);
+                boton_layout.add_widget(widget_imagen); 
 
-            layout.add_widget(boton_layout);
-
-        self.add_widget(layout);
+            label = Label(text=nombre, size_hint=(1, 0.2), halign='center', valign='middle', text_size=(None, None));
+            boton_layout.add_widget(label);
+            self.ids.layout.add_widget(boton_layout)
+    
+    def on_button_press(self, instance):
+        # Esta función se ejecutará cuando se presione el botón
+        print(f"Botón presionado: {instance.text}")
 
 # Gestor de pantallas
 class WindowManager(ScreenManager):
+
     pass
 
 # Designar archivo de diseño .kv
