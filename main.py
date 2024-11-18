@@ -53,6 +53,7 @@ class SecondWindow(Screen):
             boton_layout.add_widget(boton);
 
             self.ids.layout.add_widget(boton_layout)
+            #hOLA
 
         scrollview.scroll_y = scroll_y
             
