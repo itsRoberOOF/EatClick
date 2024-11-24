@@ -87,7 +87,7 @@ WindowManager:
 <SecondWindow>:
     canvas.before:
         Color:
-            rgba: (6/255, 52/255, 91/255, 1)
+            rgba: (6/255, 52/255, 91/255, 1)  # Color de fondo azul oscuro
         Rectangle:
             pos: self.pos
             size: self.size
@@ -95,28 +95,52 @@ WindowManager:
     name: "second"
     BoxLayout:
         orientation: 'vertical'
-        Label:
-            id: cliente_label
-            text: "Cliente:"
-            font_size: '20sp'
-            size_hint_y: 0.08
-            bold: True
-            halign: 'left'  
-            valign: 'bottom'  
-            text_size: self.size 
-            padding_x: dp(10) 
-            foreground_color: (255, 255, 255, 1)
-        Label:
-            id: nombre_label
-            text: "Lista de Productos"
-            font_size: '18sp'
-            size_hint_y: 0.07
-            halign: 'left'  
-            valign: 'top'  
-            text_size: self.size 
-            padding_x: dp(10) 
-            foreground_color: (255, 255, 255, 1)
-        ScrollView:
+        
+        BoxLayout:  # Nueva sección horizontal para los Labels y el botón
+            orientation: 'horizontal'
+            size_hint_y: 0.15  # Altura del contenedor
+            
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_x: 0.85
+                Label:
+                    id: cliente_label
+                    text: "Cliente:"
+                    font_size: '20sp'
+                    bold: True
+                    halign: 'left'  
+                    valign: 'bottom'  
+                    text_size: self.size 
+                    padding_x: dp(10) 
+                    foreground_color: (255, 255, 255, 1)
+                
+                Label:
+                    id: nombre_label
+                    text: ""
+                    font_size: '18sp'
+                    halign: 'left'  
+                    valign: 'top'  
+                    text_size: self.size 
+                    padding_x: dp(10) 
+                    foreground_color: (255, 255, 255, 1)
+            
+            Button:
+                size_hint: (None, None)
+                height: 60
+                width: 60
+                background_normal: "Carrito.png"
+                halign: "center"
+                valign: "top"
+                border: [0, 0, 0, 0]
+                allow_stretch: False
+                keep_ratio: True
+                pos_hint: {"center_y": 0.45}
+            
+            Widget:
+                size_hint: (None, None)
+                width: 20
+        
+        ScrollView:  # Sección para el ScrollView
             bar_width: 0
             scroll_type: ['content']
             GridLayout:
@@ -127,7 +151,29 @@ WindowManager:
                 row_default_height: dp(150)
                 row_force_default: True
                 spacing: dp(20)
-                padding: [20, 10, 20, 10]
-                
+                padding: [20, 10, 20, 0]
+
+        Label:  # Título "Nota"
+            id: nota_label
+            text: "Nota:"
+            font_size: '20sp'
+            size_hint_y: 0.1
+            bold: True
+            halign: 'left'  
+            valign: 'bottom'  
+            text_size: self.size 
+            padding: [20, 0, 20, 5]
+            foreground_color: (255, 255, 255, 1)   
+        
+        Label:  # Mensaje descriptivo
+            id: msj_label
+            text: "Escoge la categoría o tipo de producto que deseas agregar a tu órden actual."
+            font_size: '18sp'
+            size_hint_y: 0.2
+            halign: 'left'  
+            valign: 'top'  
+            text_size: self.size 
+            padding: [20, 0, 20, 20]
+            foreground_color: (255, 255, 255, 1)
 
                 
