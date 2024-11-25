@@ -1,9 +1,9 @@
 #### Información para poner dentro de la app ####
 
 Papas = {
-    "Papas Francesas": [1.99, "Papas fritas", "papasFrancesas.jpg", "Papas"],
-    "Papas inglesas": [1.99, "Papas en rebanadas finas", "papasFritas.jpg", "Papas"],
-    "Papas rellenas": [2.99, "Papas en rellenas de queso", "papasRellenas.jpg", "Papas"]
+    "Papas Francesas": [1.99, "Papas fritas", "papasFrancesas.jpeg", "Papas"],
+    "Papas inglesas": [1.99, "Papas en rebanadas finas", "papasFritas.jpeg", "Papas"],
+    "Papas rellenas": [2.99, "Papas en rellenas de queso", "papasRellenas.jpeg", "Papas"]
 }
 
 Hamburguesas = {
@@ -27,23 +27,23 @@ Entradas = {
 Postres = {
     "Flan": [1.99, "Una porción de flan", "flan.jpg", "Postres"],
     "Tartaleta": [1.25, "Una tartaleta de frutas", "tartaleta.jpg", "Postres"],
-    "Tres leches": [3.50, "Una porción de tres leches", "tresleches.jpg", "Postres"]
+    "Tres leches": [3.50, "Una porción de tres leches", "tresleches.jpeg", "Postres"]
 }
 
 Guarniciones = {
-    "Arroz": [1.99, "Tazón de arroz para una persona", "arroz.jpg", "Guarniciones"],
+    "Arroz": [1.99, "Tazón de arroz para una persona", "arroz.jpeg", "Guarniciones"],
     "Pasta": [1.99, "Un plato de pasta", "pasta.jpg", "Guarniciones"],
     "Ensalada": [1.99, "Un tazón de ensalada", "ensalada.jpg", "Guarniciones"]
 }
 
 Promociones = {
-    "Combo Económico": [6.99, "Una hamburguesa tradicional, papas francesas y una soda", "comboeco.jpg", "Promociones"],
-    "Combo BBQ": [7.99, "Una hamburguesa BBQ, papas inglesas y una soda", "combobbq.jpg", "Promociones"],
-    "Combo Ligero": [7.49, "Una hamburguesa de pavo con ensalada", "comboligero.jpg", "Promociones"]
+    "Combo Económico": [6.99, "Una hamburguesa tradicional, papas francesas y una soda", "comboeco.jpeg", "Promociones"],
+    "Combo BBQ": [7.99, "Una hamburguesa BBQ, papas inglesas y una soda", "combobbq.jpeg", "Promociones"],
+    "Combo Ligero": [7.49, "Una hamburguesa de pavo con ensalada", "comboligero.jpeg", "Promociones"]
 }
 
 ParaCompartir = {
-    "Combo Amigos": [9.99, "2 hamburguesas tradicionales, 2 órdenes de papas francesas y 2 sodas", "comboamigos.jpg", "Para compartir"],
-    "Combo Pareja": [14.99, "1 hamburguesa BBQ, 1 hamburguesa de pavo, 1 orden de nachos y 2 sodas", "combopareja.jpg", "Para compartir"],
-    "Combo Familiar": [24.99, "3 hamburguesas tradicionales, 2 órdenes de alitas, 1 ensalada y 3 sodas", "combofamiliar.jpg", "Para compartir"]
+    "Combo Amigos": [9.99, "2 hamburguesas tradicionales, 2 órdenes de papas francesas y 2 sodas", "comboamigos.jpeg", "Para compartir"],
+    "Combo Pareja": [14.99, "1 hamburguesa BBQ, 1 hamburguesa de pavo, 1 orden de nachos y 2 sodas", "combopareja.jpeg", "Para compartir"],
+    "Combo Familiar": [24.99, "3 hamburguesas tradicionales, 2 órdenes de alitas, 1 ensalada y 3 sodas", "combofamiliar.jpeg", "Para compartir"]
 }
