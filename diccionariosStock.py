@@ -37,12 +37,6 @@ Guarniciones = {
 }
 
 Promociones = {
-    "Combo 1": [6.99, "1 hamburguesa tradicional, papas francesas y una soda", "combo1.jpg", "Promociones"],
-    "Combo 2": [7.99, "1 hamburguesa BBQ, papas inglesas y una soda", "combo2.jpg", "Promociones"],
-    "Combo para 2": [19.99, "2 hamburguesas tradicionales, 1 orden de alitas y 2 sodas", "comboduo.jpg", "Promociones"]
-}
-
-Promociones = {
     "Combo Económico": [5.99, "Una hamburguesa tradicional con papas francesas", "comboeco.jpg", "Promociones"],
     "Combo BBQ": [6.99, "Una hamburguesa BBQ con papas inglesas", "combobbq.jpg", "Promociones"],
     "Combo Ligero": [7.49, "Una hamburguesa de pavo con ensalada", "comboligero.jpg", "Promociones"]
