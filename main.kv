@@ -76,8 +76,6 @@ WindowManager:
             font_size: 18
             on_release: 
                 root.enviar_nombre()
-				app.root.current = "second"
-				root.manager.transition.direction = "right"
             background_normal: ""  # Esto evita el color predeterminado del botón
             background_down: ""  # Esto evita el cambio de color cuando se presiona
             background_color: (1, 0, 0, 1)
@@ -375,6 +373,7 @@ WindowManager:
                     size: self.size
 
             Label:
+                id: texto_producto
                 text: "Producto - $5.99"
                 font_size: 20
                 bold: True
@@ -392,13 +391,14 @@ WindowManager:
                 pos_hint: {"center_x": 0.5}
 
             Label:
-                text: "Descripcion"
+                id: texto_descripcion
+                text: "Descripción"
                 font_size: 18
                 halign: 'left'
                 valign: 'top'
                 size_hint_y: None 
                 height: dp(40)
-                size_hint_x: 0.9
+                size_hint_x: 0.85
                 text_size: self.size
                 pos_hint: {"center_x": 0.5}
 
@@ -417,6 +417,7 @@ WindowManager:
             padding: [0, 20, 0, 20]
             pos_hint: {"center_x": 0.5}
             Button:
+                id: boton_enviar
                 text: "Agregar a la orden"
                 bold: True 
                 size_hint: (None, None)
@@ -436,7 +437,10 @@ WindowManager:
                 background_normal: ""  # Esto evita el color predeterminado del botón
                 background_down: ""  # Esto evita el cambio de color cuando se presiona
                 background_color: (16/255, 67/255, 110/255, 1)
+                on_release: 
+                    root.botones_cantidad("resta")
             TextInput:
+                id: input_cantidad
                 text: "1"
                 font_size: 20
                 halign: "center"
@@ -456,3 +460,5 @@ WindowManager:
                 background_normal: ""
                 background_down: ""
                 background_color: (14/255, 178/255, 33/255, 1)
+                on_release: 
+                    root.botones_cantidad("suma")

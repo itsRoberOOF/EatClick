@@ -5,6 +5,13 @@ from kivy.uix.button import Button  # Importa un botón para la interfaz.
 from kivy.uix.image import Image, CoreImage
 from kivy.core.window import Window  # Importar la clase Window
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.screenmanager import CardTransition
+
+from winotify import Notification, audio
+
+from copy import deepcopy;
+
+from pathlib import Path;
 
 import api
 
@@ -13,13 +20,25 @@ Window.size = (400, 600)  # Ancho: 400, Alto: 300
 cliente = "";
 productos = [];
 
+ruta_archivo = Path(__file__).parent / 'Logo_notis.png';
+
+def mostrar_error(msgp:str):
+    toast = Notification(app_id="EatClick", title="Error", msg=msgp, duration="short", icon=ruta_archivo);
+    toast.set_audio(audio.Reminder, loop=False);
+    toast.show();
+
 # Define nuestras diferentes pantallas
 class FirstWindow(Screen):
     def enviar_nombre(self):
         # Accede al texto del TextInput
-        nombre = self.ids.nombre_input.text
-        # Pasa el nombre a la segunda pantalla
-        self.manager.get_screen("second").actualizar_label(nombre)
+        nombre = self.ids.nombre_input.text;
+        if(nombre == "" or len(nombre) < 2):
+            mostrar_error("Ingrese un nombre válido");
+            return;
+        else:
+            # Pasa el nombre a la segunda pantalla
+            self.manager.get_screen("second").actualizar_label(nombre);
+            self.manager.current = "second";
 
 class SecondWindow(Screen):
     def actualizar_label(self, nombre):
@@ -130,23 +149,83 @@ class FourthWindow(Screen):
         print(self.id);
 
     def on_enter(self):
+        self.ids.input_cantidad.text = "1";
+
         data_producto = api.leer_producto(self.id);
-        print(data_producto);
+        self.ids.texto_producto.text = f"{data_producto['nombre']} - ${data_producto['precio']:,.2f}";
         if(data_producto['imagen'] != None):
             img = CoreImage(data_producto['imagen'], ext="png").texture;
             self.ids.imagen_producto.texture = img;
+        self.ids.texto_descripcion.text = data_producto['descripcion'];
+        self.ids.boton_enviar.bind(on_press=self.agregar_producto);
+    
+    def agregar_producto(self, instance):
+        data_producto = api.leer_producto(self.id);
+        validar = self.validar_cantidad();
+        if(validar):
+            cantidad = int(self.ids.input_cantidad.text);
+            data_producto['cantidad'] = cantidad;
+            productos.append(data_producto);
+            self.validar_productos_duplicados();
+            self.manager.current = "third";
+    
+
+    def validar_productos_duplicados(self):
+        productos_duplicados = [];
+        for i, p in enumerate(productos):
+            print("Id producto:" + p['id']);
+            if(p['id'] == self.id): 
+                info_producto = {"posicion": i, "cantidad": p['cantidad']};
+                productos_duplicados.append(info_producto);
+        
+        if(len(productos_duplicados) > 1):
+            cantidad_total = 0;
+            for i in productos_duplicados:
+                cantidad_total += i['cantidad'];
+            productos[productos_duplicados[0]['posicion']]['cantidad'] = cantidad_total;
+            for i in range(1, len(productos_duplicados)):
+                productos.pop(productos_duplicados[i]['posicion']);
+
+    def botones_cantidad(self, operacion:str):
+        cantidad = int(self.ids.input_cantidad.text);
+        if(operacion == 'suma' and cantidad < 99):
+            cantidad = int(cantidad) + 1;
+        elif(operacion == 'resta' and cantidad > 1):
+            cantidad = int(cantidad) - 1;
+        else:
+            mostrar_error("La cantidad debe estar entre 1 y 99");
+        self.ids.input_cantidad.text = str(cantidad);
+
+    def validar_cantidad(self):
+        try:
+            cantidad = int(self.ids.input_cantidad.text);
+            if(cantidad <= 0):
+                self.ids.input_cantidad.text = "1";
+                mostrar_error("La cantidad debe ser mayor a 0");
+                return False;
+            elif(cantidad > 99):
+                self.ids.input_cantidad.text = "99";
+                mostrar_error("La cantidad no puede ser mayor a 99");
+                return False;
+            else:
+                return True;
+        except:
+            mostrar_error("Ingrese un número válido");
+            return False;
 
 # Gestor de pantallas
 class WindowManager(ScreenManager):
-    pass
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.transition = CardTransition(direction='right');
 
 # Designar archivo de diseño .kv
 kv = Builder.load_file('main.kv')
 
 class Eatclick(App):
     def build(self):
-        return kv
+        self.icon = str(ruta_archivo);
+        return kv;
 
 if __name__ == '__main__':
     Eatclick().run()
-
