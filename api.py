@@ -28,45 +28,80 @@ firebase_admin.initialize_app(firebase_sdk, { 'storageBucket' : 'proyectopython-
 almacenamiento_imagenes = storage.bucket();
 
 def leer_coleccion(nombre_coleccion:str):
+    try:
+        # * Conexión con la base
+        db = firestore.client();
 
-    # * Conexión con la base
-    db = firestore.client();
+        """ 
+        ? db.collection().stream() → Obtiene todos los documentos de la coleccion indicada
 
-    """ 
-    ? db.collection().stream() → Obtiene todos los documentos de la coleccion indicada
+        Crea un objeto de firestore que almacena todos los productos
+        """
 
-    Crea un objeto de firestore que almacena todos los productos
-    """
+        documentos = db.collection(nombre_coleccion).stream();
 
-    documentos = db.collection(nombre_coleccion).stream();
+        # * Se crea una lista vacia para almacenar los documentos
+        data_documentos = [];
 
-    # * Se crea una lista vacia para almacenar los documentos
-    data_documentos = [];
+        # * Se iteran los documentos para guardar su informacion, además se convierte el objeto a un diccionario
+        for documento in documentos:
+            info_doc = documento.to_dict();
+            info_doc['id'] = documento.id;
+            data_documentos.append(info_doc);
 
-    # * Se iteran los documentos para guardar su informacion, además se convierte el objeto a un diccionario
-    for documento in documentos:
-        info_doc = documento.to_dict();
-        info_doc['id'] = documento.id;
-        data_documentos.append(info_doc);
+        # ! Se cierra la conexión con la base
+        db.close();
 
-    # ! Se cierra la conexión con la base
-    db.close();
-
-    # Retorno
-    return data_documentos;
+        # Retorno
+        return data_documentos;
+    except:
+        print("Error en la base de datos");
+        return None;
 
 def imagenes_coleccion(diccionario:dict):
-    data_documentos = diccionario;
+    try:
+        data_documentos = diccionario;
 
-    for doc in data_documentos:
-        imagen = doc.get('imagen', None);
+        for doc in data_documentos:
+            imagen = doc.get('imagen', None);
 
-        if(imagen != None):
-            blob = almacenamiento_imagenes.blob(imagen).download_as_bytes();
-            bytes = io.BytesIO(blob);
-            doc['imagen'] = bytes;
-        else:
-            doc['imagen'] = None;
+            if(imagen != None):
+                blob = almacenamiento_imagenes.blob(imagen).download_as_bytes();
+                bytes = io.BytesIO(blob);
+                doc['imagen'] = bytes;
+            else:
+                doc['imagen'] = None;
 
-    return data_documentos;
+        return data_documentos;
+    except:
+        print("Error en la base de datos");
+        return None;
 
+def leer_productos(categoria:str):
+    try:
+        data_productos = leer_coleccion("productos");
+        productos_filtrados = [];
+        for i in data_productos:
+            if(i['categoria'] == categoria):
+                productos_filtrados.append(i);
+        return productos_filtrados;
+    except:
+        print("Error en la base de datos");
+        return None;
+
+def leer_producto(id:str):
+    try:
+        data_productos = leer_coleccion("productos");
+        for i in data_productos:
+            if(i['id'] == id):
+                imagen = i.get('imagen', None);
+                if(imagen != None):
+                    blob = almacenamiento_imagenes.blob(imagen).download_as_bytes();
+                    bytes = io.BytesIO(blob);
+                    i['imagen'] = bytes;
+                else:
+                    i['imagen'] = None;
+                return i;
+    except:
+        print("Error en la base de datos");
+        return None;

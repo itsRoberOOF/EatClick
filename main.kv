@@ -8,6 +8,10 @@ WindowManager:
         name: "first"
 	SecondWindow:
         name: "second"
+    ThirdWindow:
+        name: "third"
+    FourthWindow:
+        name: "fourth"
 
 #Portada
 
@@ -40,15 +44,15 @@ WindowManager:
             text: "Bienvenido"
             size_hint_y: None
             height: dp(25)
-            font_size: '20sp' 
+            font_size: 28
             bold: True
         
         Label:
             text: "Ingresa un nombre para tu órden"
             size_hint_y: None
             height: dp(18)
-            font_size: '15sp' 
-            bold: True
+            font_size: 18
+            bold: False
         
         TextInput:  # Campo de entrada
             id: nombre_input
@@ -57,7 +61,7 @@ WindowManager:
             height: 45  # Altura fija
             background_color: (16/255, 67/255, 110/255, 1)  # Color de fondo (RGBA)
             foreground_color: (1, 1, 1, 1)  # Color del texto (RGBA)
-            font_size: '18sp'  # Tamaño de letra
+            font_size: 18  # Tamaño de letra
             padding: [10, 10, 10, 10]  # Padding interno del TextInput
             size_hint_x: 0.6
             pos_hint: {"center_x": 0.5}
@@ -69,10 +73,9 @@ WindowManager:
             pos_hint: {"center_x": 0.5}
             size_hint_y: None
             height: 50
+            font_size: 18
             on_release: 
                 root.enviar_nombre()
-				app.root.current = "second"
-				root.manager.transition.direction = "right"
             background_normal: ""  # Esto evita el color predeterminado del botón
             background_down: ""  # Esto evita el cambio de color cuando se presiona
             background_color: (1, 0, 0, 1)
@@ -87,7 +90,7 @@ WindowManager:
 <SecondWindow>:
     canvas.before:
         Color:
-            rgba: (6/255, 52/255, 91/255, 1)
+            rgba: (6/255, 52/255, 91/255, 1)  # Color de fondo azul oscuro
         Rectangle:
             pos: self.pos
             size: self.size
@@ -95,28 +98,54 @@ WindowManager:
     name: "second"
     BoxLayout:
         orientation: 'vertical'
-        Label:
-            id: cliente_label
-            text: "Cliente:"
-            font_size: '20sp'
-            size_hint_y: 0.08
-            bold: True
-            halign: 'left'  
-            valign: 'bottom'  
-            text_size: self.size 
-            padding_x: dp(10) 
-            foreground_color: (255, 255, 255, 1)
-        Label:
-            id: nombre_label
-            text: "Lista de Productos"
-            font_size: '18sp'
-            size_hint_y: 0.07
-            halign: 'left'  
-            valign: 'top'  
-            text_size: self.size 
-            padding_x: dp(10) 
-            foreground_color: (255, 255, 255, 1)
-        ScrollView:
+        
+        BoxLayout: 
+            orientation: 'horizontal'
+            size_hint_y: 0.15  # Altura del contenedor
+            
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_x: 0.85
+                Label:
+                    id: cliente_label
+                    text: "Cliente:"
+                    font_size: 20
+                    bold: True
+                    halign: 'left'  
+                    valign: 'bottom'  
+                    text_size: self.size 
+                    padding_x: dp(20) 
+                    foreground_color: (255, 255, 255, 1)
+                
+                Label:
+                    id: nombre_label
+                    text: ""
+                    font_size: 18
+                    halign: 'left'  
+                    valign: 'top'  
+                    text_size: self.size 
+                    padding_x: dp(20) 
+                    foreground_color: (255, 255, 255, 1)
+            
+            Button:
+                size_hint: (None, None)
+                height: 50
+                width: 50
+                background_normal: "Carrito.png"
+                background_down: "Carrito_presionado.png"
+                halign: "center"
+                valign: "top"
+                border: [0, 0, 0, 0]
+                allow_stretch: False
+                keep_ratio: True
+                pos_hint: {"center_y": 0.45}
+            
+            Widget:
+                size_hint: (None, None)
+                width: 20
+        
+        ScrollView:  # Sección para el ScrollView
+            do_scroll_x: False
             bar_width: 0
             scroll_type: ['content']
             GridLayout:
@@ -127,7 +156,309 @@ WindowManager:
                 row_default_height: dp(150)
                 row_force_default: True
                 spacing: dp(20)
-                padding: [20, 10, 20, 10]
-                
+                padding: [20, 10, 20, 0]
 
+        Label:  # Título "Nota"
+            id: nota_label
+            text: "Nota:"
+            font_size: 20
+            size_hint_y: 0.1
+            bold: True
+            halign: 'left'  
+            valign: 'bottom'  
+            text_size: self.size 
+            padding: [20, 0, 20, 5]
+            foreground_color: (255, 255, 255, 1)   
+        
+        Label:  # Mensaje descriptivo
+            id: msj_label
+            text: "Escoge la categoría o tipo de producto que deseas agregar a tu orden actual."
+            font_size: 18
+            size_hint_y: 0.2
+            halign: 'left'  
+            valign: 'top'  
+            text_size: self.size 
+            padding: [20, 0, 20, 20]
+            foreground_color: (255, 255, 255, 1)
+
+<ThirdWindow>:
+    name: "third"
+    canvas.before:
+        Color:
+            rgba: (6/255, 52/255, 91/255, 1)  # Color de fondo azul oscuro
+        Rectangle:
+            pos: self.pos
+            size: self.size    
+
+    BoxLayout:
+        orientation: 'vertical'
+
+        BoxLayout: 
+            orientation: 'horizontal'
+            size_hint_y: 0.15  # Altura del contenedor
+            
+            Widget:
+                size_hint: (None, None)
+                width: 20
+
+            Button:
+                size_hint: (None, None)
+                height: 50
+                width: 50
+                background_normal: "Atras.png"
+                background_down: "Atras_presionado.png"
+                halign: "center"
+                valign: "top"
+                border: [0, 0, 0, 0]
+                allow_stretch: False
+                keep_ratio: True
+                pos_hint: {"center_y": 0.45}
+                on_press: root.manager.current = 'second'
+
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_x: 0.85
+                Label:
+                    id: cliente_label
+                    text: "Categoría:"
+                    font_size: 20
+                    bold: True
+                    halign: 'center'  
+                    valign: 'bottom'  
+                    text_size: self.size 
+                    padding_x: dp(10) 
+                    foreground_color: (255, 255, 255, 1)
                 
+                Label:
+                    id: categoria_label
+                    text: ""
+                    font_size: 18
+                    halign: 'center'  
+                    valign: 'top'  
+                    text_size: self.size 
+                    padding_x: dp(10) 
+                    foreground_color: (255, 255, 255, 1)
+            
+            Button:
+                size_hint: (None, None)
+                height: 50
+                width: 50
+                background_normal: "Carrito.png"
+                background_down: "Carrito_presionado.png"
+                halign: "center"
+                valign: "top"
+                border: [0, 0, 0, 0]
+                allow_stretch: False
+                keep_ratio: True
+                pos_hint: {"center_y": 0.45}
+            
+            Widget:
+                size_hint: (None, None)
+                width: 20
+        ScrollView:  # Sección para el ScrollView
+            bar_width: 0
+            scroll_type: ['content']
+            GridLayout:
+                id: layout
+                cols: 2
+                size_hint_y: None
+                height: self.minimum_height
+                row_default_height: dp(150)
+                row_force_default: True
+                spacing: dp(20)
+                padding: [20, 10, 20, 0]
+
+        Label:  # Título "Nota"
+            id: nota_label
+            text: "Nota:"
+            font_size: '20sp'
+            size_hint_y: 0.1
+            bold: True
+            halign: 'left'  
+            valign: 'bottom'  
+            text_size: self.size 
+            padding: [20, 0, 20, 5]
+            foreground_color: (255, 255, 255, 1)   
+        
+        Label:  # Mensaje descriptivo
+            id: msj_label
+            text: "Selecciona el producto que deseas agregar a tu orden."
+            font_size: '18sp'
+            size_hint_y: 0.2
+            halign: 'left'  
+            valign: 'top'  
+            text_size: self.size 
+            padding: [20, 0, 20, 20]
+            foreground_color: (255, 255, 255, 1)
+
+<FourthWindow>:
+    name: "fourth"
+    canvas.before:
+        Color:
+            rgba: (6/255, 52/255, 91/255, 1)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: 'vertical'
+        id: layout
+
+        BoxLayout: 
+            orientation: 'horizontal'
+            size_hint_y: 0.15
+            
+            Widget:
+                size_hint: (None, None)
+                width: 20
+
+            Button:
+                size_hint: (None, None)
+                height: 50
+                width: 50
+                background_normal: "Atras.png"
+                background_down: "Atras_presionado.png"
+                halign: "center"
+                valign: "top"
+                border: [0, 0, 0, 0]
+                allow_stretch: False
+                keep_ratio: True
+                pos_hint: {"center_y": 0.45}
+                on_press: root.manager.current = 'third'
+
+            Label:
+                id: detalle_label
+                size_hint_x: 0.85
+                text: "Detalles del producto:"
+                font_size: 20
+                bold: True
+                halign: 'center'  
+                valign: 'middle'  
+                text_size: self.size 
+                padding_x: dp(10) 
+                foreground_color: (255, 255, 255, 1)
+            
+            Button:
+                size_hint: (None, None)
+                height: 50
+                width: 50
+                background_normal: "Carrito.png"
+                background_down: "Carrito_presionado.png"
+                halign: "center"
+                valign: "top"
+                border: [0, 0, 0, 0]
+                allow_stretch: False
+                keep_ratio: True
+                pos_hint: {"center_y": 0.45}
+            
+            Widget:
+                size_hint: (None, None)
+                width: 20
+    
+        Widget:
+            size_hint_y: None
+            height: 10
+
+        BoxLayout:
+            orientation: "vertical"
+            size_hint_x: 0.9
+            spacing: dp(10)  # Añade un pequeño espacio entre los elementos (puedes ajustarlo)
+            pos_hint: {"center_x": 0.5, "top": 1}
+
+            canvas.before:
+                Color:
+                    rgba: (16/255, 67/255, 110/255, 1)
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            Label:
+                id: texto_producto
+                text: "Producto - $5.99"
+                font_size: 20
+                bold: True
+                halign: 'center'
+                valign: 'middle'
+                size_hint_y: None
+                height: dp(30)
+
+            Image:
+                id: imagen_producto
+                source: "Default.png"
+                size_hint: (0.9, None) 
+                height: dp(200) 
+                allow_stretch: True
+                pos_hint: {"center_x": 0.5}
+
+            Label:
+                id: texto_descripcion
+                text: "Descripción"
+                font_size: 18
+                halign: 'left'
+                valign: 'top'
+                size_hint_y: None 
+                height: dp(40)
+                size_hint_x: 0.85
+                text_size: self.size
+                pos_hint: {"center_x": 0.5}
+
+            Widget:
+                size_hint_y: None
+                height: dp(70) 
+
+        GridLayout:
+            cols: 4
+            size_hint_y: 0.2
+            size_hint_x: 0.9
+            row_default_height: dp(35)
+            row_force_default: True
+            spacing: dp(5)
+            height: self.minimum_height  # Ajusta la altura al contenido
+            padding: [0, 20, 0, 20]
+            pos_hint: {"center_x": 0.5}
+            Button:
+                id: boton_enviar
+                text: "Agregar a la orden"
+                bold: True 
+                size_hint: (None, None)
+                height: 40
+                size_hint_x: 2
+                background_normal: ""  # Esto evita el color predeterminado del botón
+                background_down: ""  # Esto evita el cambio de color cuando se presiona
+                background_color: (1, 0, 0, 1)
+                font_size: 18
+                
+            Button:
+                text: "-"
+                bold: True 
+                size_hint: (None, None)
+                height: 40
+                size_hint_x: 0.5
+                background_normal: ""  # Esto evita el color predeterminado del botón
+                background_down: ""  # Esto evita el cambio de color cuando se presiona
+                background_color: (16/255, 67/255, 110/255, 1)
+                on_release: 
+                    root.botones_cantidad("resta")
+            TextInput:
+                id: input_cantidad
+                text: "1"
+                font_size: 20
+                halign: "center"
+                valign: "middle"
+                color: 0, 0, 0, 1
+                bold: True 
+                size_hint: (None, None)
+                height: 40
+                size_hint_x: 0.5
+                background_color: (1, 1, 1, 1)
+            Button:
+                text: "+"
+                bold: True 
+                size_hint: (None, None)
+                height: 40
+                size_hint_x: 0.5
+                background_normal: ""
+                background_down: ""
+                background_color: (14/255, 178/255, 33/255, 1)
+                on_release: 
+                    root.botones_cantidad("suma")
