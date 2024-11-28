@@ -36,7 +36,7 @@ class FirstWindow(Screen):
     def enviar_nombre(self):
         # Accede al texto del TextInput
         nombre = self.ids.nombre_input.text;
-        global cliente 
+        global cliente;
         cliente = nombre #nombre almacenado en variable global
         if(nombre == "" or len(nombre) < 2):
             mostrar_noti("Error", "Ingrese un nombre válido (mayor a 2 caracteres)");
@@ -45,6 +45,9 @@ class FirstWindow(Screen):
             # Pasa el nombre a la segunda pantalla
             self.manager.get_screen("second").actualizar_label(nombre);
             self.manager.current = "second";
+
+    def on_leave(self):
+        self.ids.nombre_input.text = "";
 
 class SecondWindow(Screen):
     def actualizar_label(self, nombre):
@@ -70,7 +73,7 @@ class SecondWindow(Screen):
 
             if(imagen!=None):
                 img = CoreImage(imagen, ext="png").texture;
-                widget_imagen = Image(source = "loguito.png", size_hint=(1,0.7), allow_stretch=True, keep_ratio=False);
+                widget_imagen = Image(source = "", size_hint=(1,0.7), allow_stretch=True, keep_ratio=False);
                 widget_imagen.texture = img;
                 widget_imagen.bind(on_touch_down=lambda instance, touch, nombre=nombre: self.boton_presionado(instance, touch, nombre));
                 boton_layout.add_widget(widget_imagen);
@@ -119,7 +122,7 @@ class ThirdWindow(Screen):
 
             if(imagen!=None):
                 img = CoreImage(imagen, ext="png").texture;
-                widget_imagen = Image(source = "loguito.png", size_hint=(1,0.7), allow_stretch=True, keep_ratio=False);
+                widget_imagen = Image(source = "", size_hint=(1,0.7), allow_stretch=True, keep_ratio=False);
                 widget_imagen.texture = img;
                 widget_imagen.bind(on_touch_down=lambda instance, touch, id=id: self.boton_presionado(instance, touch, id));
                 boton_layout.add_widget(widget_imagen);
@@ -228,9 +231,6 @@ class FourthWindow(Screen):
 
 class FifthWindow(Screen):
     productos_factura = [];
-    
-    def cerrar_app(self, instance):
-            self.stop()
 
     def on_enter(self):
         self.productos_factura = [];
@@ -250,7 +250,7 @@ class FifthWindow(Screen):
                 boton_layout = BoxLayout(orientation="horizontal", size_hint=(0.9, None), height=80);
                 if data_producto['imagen'] != None:
                     img = CoreImage(data_producto['imagen'], ext="png").texture;
-                    widget_imagen = Image(source = "loguito.png", size_hint=(0.3, 1), allow_stretch=True, keep_ratio=False);
+                    widget_imagen = Image(source = "", size_hint=(0.3, 1), allow_stretch=True, keep_ratio=False);
                     widget_imagen.texture = img;
                     boton_layout.add_widget(widget_imagen);
 
@@ -284,46 +284,49 @@ class FifthWindow(Screen):
         scrollview.scroll_y = scroll_y;
 
     def generar_factura(self):
+        global cliente;
         if(len(self.productos_factura) > 0):
-            numero_orden = random.randint(10000, 99999) #genera un numero de orden random
-            fecha_hora_actual = datetime.datetime.now() #captura la fecha y hora actual
-            total = sum(producto['precio'] * producto['cantidad'] for producto in productos) #suma el valor de los productos
+            numero_orden = random.randint(10000, 99999); #genera un numero de orden random
+            fecha_hora_actual = datetime.datetime.now(); #captura la fecha y hora actual
+            total = sum(producto['precio'] * producto['cantidad'] for producto in productos); #suma el valor de los productos
             #utilizando libreria para reportes (fpdf
-            pdf = FPDF(orientation='P') #objeto del pd
-            pdf.add_page() #agrega una pagin
-            pdf.set_font("Arial", size=12) #fuente
+            pdf = FPDF(orientation='P'); #objeto del pd
+            pdf.add_page(); #agrega una pagin
+            pdf.set_font("Arial", size=12); #fuente
             #Encabezad
-            pdf.image('Loguito.png', x=10, y=8, w=30, h=20) #loguito del sistem
-            pdf.set_font("Arial", size=16, style='B') #fuente
-            pdf.cell(200, 10, txt="Factura Electrónica - EatClick", ln=1, align='C') 
-            pdf.cell(200, 10, txt=fecha_hora_actual.strftime("%Y-%m-%d %H:%M:%S"), ln=1, align='C')
-            pdf.cell(200, 10, txt=f"Cliente: {cliente} - {numero_orden}", ln=1, align='C') #cliente que se obtiene de variable global en FirstWindow
+            pdf.image(str(ruta_imagenes / "Logo_notis.png"), x=10, y=8, w=30, h=30); #loguito del sistem
+            pdf.set_font("Arial", size=16, style='B'); #fuente
+            pdf.cell(200, 10, txt="Factura Electrónica - EatClick", ln=1, align='C'); 
+            pdf.cell(200, 10, txt=fecha_hora_actual.strftime("%Y-%m-%d %H:%M:%S"), ln=1, align='C');
+            pdf.cell(200, 10, txt=f"Cliente: {cliente} - {numero_orden}", ln=1, align='C'); #cliente que se obtiene de variable global en FirstWindow
             
-            pdf.cell(200, 5, txt="", ln=1) #separacion visual
+            pdf.cell(200, 5, txt="", ln=1); #separacion visual
             
-            pdf.cell(100, 10, txt="Producto:", ln=0)
-            pdf.cell(40, 10, txt="Cantidad:", ln=0)
-            pdf.cell(60, 10, txt="Precio Total:", ln=1)
+            pdf.cell(100, 10, txt="Producto:", ln=0);
+            pdf.cell(40, 10, txt="Cantidad:", ln=0);
+            pdf.cell(60, 10, txt="Precio Total:", ln=1);
             for producto in productos: #for que recorre la lista de 'productos' y setea los valores con formato
-                pdf.cell(100, 10, txt=producto['nombre'], ln=0)
-                pdf.cell(40, 10, txt=str(producto['cantidad']), ln=0)
-                pdf.cell(60, 10, txt=f"${producto['precio'] * producto['cantidad']:.2f}", ln=1)
+                pdf.cell(100, 10, txt=producto['nombre'], ln=0);
+                pdf.cell(40, 10, txt=str(producto['cantidad']), ln=0);
+                pdf.cell(60, 10, txt=f"${producto['precio'] * producto['cantidad']:.2f}", ln=1);
                 
-            pdf.cell(200, 5, txt="", ln=1)
+            pdf.cell(200, 5, txt="", ln=1);
             
-        pdf.cell(160, 10, txt="Total:", ln=0)    
-        pdf.cell(40, 10, txt=f"${total:.2f}", ln=1) #total de compra
+        pdf.cell(160, 10, txt="Total:", ln=0);    
+        pdf.cell(40, 10, txt=f"${total:.2f}", ln=1); #total de compra
         
-        carpeta_facturas = "facturas_restaurante" #crea la carpeta para almacenar facturas
+        carpeta_facturas = "facturas_restaurante"; #crea la carpeta para almacenar facturas
         if not os.path.exists(carpeta_facturas):
-            os.makedirs(carpeta_facturas) #si no existe
+            os.makedirs(carpeta_facturas); #si no existe
 
         #guarda el archivo y almacena la ruta en la variable
-        ruta_archivo = os.path.join(carpeta_facturas, f"factura_{numero_orden}_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf")
+        ruta_archivo = os.path.join(carpeta_facturas, f"factura_{numero_orden}_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf");
 
-        pdf.output(ruta_archivo) #guardamos el pdf
-        mostrar_noti("Factura creada", "Su factura ha sido creada con éxito!") #mensaje de exito
-        self.manager.current = 'first' #regresa al inicio
+        pdf.output(ruta_archivo); #guardamos el pdf
+        mostrar_noti("Factura creada", "Su factura ha sido creada con éxito!"); #mensaje de exito
+        productos.clear();
+        cliente = "";
+        self.manager.current = 'first'; #regresa al inicio
 
     def borrar_producto(self, instance, posicion):
         productos.pop(posicion);
