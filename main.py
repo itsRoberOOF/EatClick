@@ -6,10 +6,9 @@ from kivy.uix.image import Image, CoreImage
 from kivy.core.window import Window  # Importar la clase Window
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import CardTransition
+from kivy.uix.label import Label
 
 from winotify import Notification, audio
-
-from copy import deepcopy;
 
 from pathlib import Path;
 
@@ -20,10 +19,10 @@ Window.size = (400, 600)  # Ancho: 400, Alto: 300
 cliente = "";
 productos = [];
 
-ruta_archivo = Path(__file__).parent / 'Logo_notis.png';
+ruta_imagenes = Path(__file__).parent;
 
-def mostrar_error(msgp:str):
-    toast = Notification(app_id="EatClick", title="Error", msg=msgp, duration="short", icon=ruta_archivo);
+def mostrar_noti(titulop:str, msgp:str):
+    toast = Notification(app_id="EatClick", title=titulop, msg=msgp, duration="short", icon=str(ruta_imagenes / "Logo_notis.png"));
     toast.set_audio(audio.Reminder, loop=False);
     toast.show();
 
@@ -33,7 +32,7 @@ class FirstWindow(Screen):
         # Accede al texto del TextInput
         nombre = self.ids.nombre_input.text;
         if(nombre == "" or len(nombre) < 2):
-            mostrar_error("Ingrese un nombre válido");
+            mostrar_noti("Error", "Ingrese un nombre válido (mayor a 2 caracteres)");
             return;
         else:
             # Pasa el nombre a la segunda pantalla
@@ -46,11 +45,11 @@ class SecondWindow(Screen):
         self.ids.nombre_label.text = f"{nombre}";
         
     def on_enter(self):
-        scrollview = self.ids.layout.parent  # Parent del GridLayout es el ScrollView
-        scroll_y = scrollview.scroll_y  # Guardar posición actual del scroll
+        scrollview = self.ids.layout.parent;
+        scroll_y = scrollview.scroll_y;
         
         # Limpiar widgets previos
-        self.ids.layout.clear_widgets() # Limpia los widgets actuales
+        self.ids.layout.clear_widgets();
 
         data_categorias = api.leer_coleccion('categorias');
         data_categorias = api.imagenes_coleccion(data_categorias);
@@ -66,39 +65,38 @@ class SecondWindow(Screen):
                 img = CoreImage(imagen, ext="png").texture;
                 widget_imagen = Image(source = "loguito.png", size_hint=(1,0.7), allow_stretch=True, keep_ratio=False);
                 widget_imagen.texture = img;
-                widget_imagen.text = nombre;
-                widget_imagen.bind(on_touch_down=lambda instance, touch, nombre=nombre: self.boton_presionado(instance, touch, nombre))
+                widget_imagen.bind(on_touch_down=lambda instance, touch, nombre=nombre: self.boton_presionado(instance, touch, nombre));
                 boton_layout.add_widget(widget_imagen);
 
             boton = Button(text=f"{nombre}",size_hint=(1,0.3),background_normal="", background_down="", background_color=(16/255, 67/255, 110/255, 1), font_size=17, halign="center", valign="middle");
-            boton.bind(on_press=lambda instance, nombre=nombre: self.boton_presionado(instance, None, nombre))
+            boton.bind(on_press=lambda instance, nombre=nombre: self.boton_presionado(instance, None, nombre));
             boton_layout.add_widget(boton);
 
-            self.ids.layout.add_widget(boton_layout)
+            self.ids.layout.add_widget(boton_layout);
 
-        scrollview.scroll_y = scroll_y
+        scrollview.scroll_y = scroll_y;
             
     def boton_presionado(self, instance, touch, nombre):
         if touch:
             if not instance.collide_point(*touch.pos):
-                return  
+                return;
 
-        # Pasa el nombre a la segunda pantalla
+        # Pasa la categoría a la tercera pantalla
         self.manager.current = "third";
         self.manager.get_screen("third").actualizar_label_categoria(nombre)
 
 class ThirdWindow(Screen):
     def actualizar_label_categoria(self, categoriap):
         self.categoria = categoriap;
-        # Actualiza el texto del Label en la pantalla 2
+        # Actualiza el texto de la categoria
         self.ids.categoria_label.text = f"{self.categoria}";
 
     def on_enter(self):
-        scrollview = self.ids.layout.parent  # Parent del GridLayout es el ScrollView
-        scroll_y = scrollview.scroll_y  # Guardar posición actual del scroll
+        scrollview = self.ids.layout.parent;
+        scroll_y = scrollview.scroll_y;
         
         # Limpiar widgets previos
-        self.ids.layout.clear_widgets() # Limpia los widgets actuales
+        self.ids.layout.clear_widgets();
 
         data_productos = api.leer_productos(self.categoria);
         data_productos = api.imagenes_coleccion(data_productos);
@@ -116,21 +114,20 @@ class ThirdWindow(Screen):
                 img = CoreImage(imagen, ext="png").texture;
                 widget_imagen = Image(source = "loguito.png", size_hint=(1,0.7), allow_stretch=True, keep_ratio=False);
                 widget_imagen.texture = img;
-                widget_imagen.text = nombre;
-                widget_imagen.bind(on_touch_down=lambda instance, touch, id=id: self.boton_presionado(instance, touch, id))
+                widget_imagen.bind(on_touch_down=lambda instance, touch, id=id: self.boton_presionado(instance, touch, id));
                 boton_layout.add_widget(widget_imagen);
     
             # Crear el botón con formato para el texto
             boton = Button(size_hint=(1, 0.3), background_normal="", background_down="", background_color=(16/255, 67/255, 110/255, 1), font_size=17, halign="center", valign="middle");
 
             # Habilitar el uso de formato para el texto
-            boton.markup = True  # Activar markup
-            boton.text = f"[b]{nombre}[/b]\n${precio:,.2f}"  # Formato de texto: nombre en negrita, precio con formato
+            boton.markup = True;
+            boton.text = f"[b]{nombre}[/b]\n${precio:,.2f}";
             
-            boton.bind(on_press=lambda instance, id=id: self.boton_presionado(instance, None, id))
+            boton.bind(on_press=lambda instance, id=id: self.boton_presionado(instance, None, id));
 
             # Añadir el botón al layout
-            boton_layout.add_widget(boton)
+            boton_layout.add_widget(boton);
     
             self.ids.layout.add_widget(boton_layout);
         
@@ -146,34 +143,43 @@ class ThirdWindow(Screen):
 class FourthWindow(Screen):
     def recibir_id(self, idp):
         self.id = idp;
-        print(self.id);
 
     def on_enter(self):
         self.ids.input_cantidad.text = "1";
 
         data_producto = api.leer_producto(self.id);
         self.ids.texto_producto.text = f"{data_producto['nombre']} - ${data_producto['precio']:,.2f}";
+
         if(data_producto['imagen'] != None):
             img = CoreImage(data_producto['imagen'], ext="png").texture;
             self.ids.imagen_producto.texture = img;
+        else:
+            self.ids.imagen_producto.source = str(ruta_imagenes / "Default.png");
+        
         self.ids.texto_descripcion.text = data_producto['descripcion'];
         self.ids.boton_enviar.bind(on_press=self.agregar_producto);
     
+    def on_leave(self):
+        self.ids.imagen_producto.texture = None;
+        self.ids.imagen_producto.source = str(ruta_imagenes / "Default.png");
+        self.ids.texto_producto.text = "";
+        self.ids.texto_descripcion.text = "";
+
     def agregar_producto(self, instance):
         data_producto = api.leer_producto(self.id);
         validar = self.validar_cantidad();
         if(validar):
             cantidad = int(self.ids.input_cantidad.text);
             data_producto['cantidad'] = cantidad;
+            data_producto['id'] = self.id;
             productos.append(data_producto);
             self.validar_productos_duplicados();
-            self.manager.current = "third";
+            self.manager.current = "second";
+            mostrar_noti("Éxito", "Producto agregado al carrito");
     
-
     def validar_productos_duplicados(self):
         productos_duplicados = [];
         for i, p in enumerate(productos):
-            print("Id producto:" + p['id']);
             if(p['id'] == self.id): 
                 info_producto = {"posicion": i, "cantidad": p['cantidad']};
                 productos_duplicados.append(info_producto);
@@ -193,7 +199,7 @@ class FourthWindow(Screen):
         elif(operacion == 'resta' and cantidad > 1):
             cantidad = int(cantidad) - 1;
         else:
-            mostrar_error("La cantidad debe estar entre 1 y 99");
+            mostrar_noti("Error", "La cantidad debe estar entre 1 y 99");
         self.ids.input_cantidad.text = str(cantidad);
 
     def validar_cantidad(self):
@@ -201,31 +207,95 @@ class FourthWindow(Screen):
             cantidad = int(self.ids.input_cantidad.text);
             if(cantidad <= 0):
                 self.ids.input_cantidad.text = "1";
-                mostrar_error("La cantidad debe ser mayor a 0");
+                mostrar_noti("Error", "Ingrese un número válido (entre 1 y 99)");
                 return False;
             elif(cantidad > 99):
                 self.ids.input_cantidad.text = "99";
-                mostrar_error("La cantidad no puede ser mayor a 99");
+                mostrar_noti("Error", "Ingrese un número válido (entre 1 y 99)");
                 return False;
             else:
                 return True;
         except:
-            mostrar_error("Ingrese un número válido");
+            mostrar_noti("Error", "Ingrese un número válido (entre 1 y 99)");
             return False;
+
+class FifthWindow(Screen):
+    productos_factura = [];
+
+    def on_enter(self):
+        self.productos_factura = [];
+        scrollview = self.ids.layout.parent;
+        scroll_y = scrollview.scroll_y;
+
+        # Limpiar widgets previos
+        self.ids.layout.clear_widgets();
+
+        precio_total = 0;
+
+        if len(productos) > 0:
+            for i, p in enumerate(productos):
+                data_producto = api.leer_producto(p['id']);
+                data_producto['cantidad'] = p['cantidad'];
+                self.productos_factura.append(data_producto);
+                boton_layout = BoxLayout(orientation="horizontal", size_hint=(0.9, None), height=80);
+                if data_producto['imagen'] != None:
+                    img = CoreImage(data_producto['imagen'], ext="png").texture;
+                    widget_imagen = Image(source = "loguito.png", size_hint=(0.3, 1), allow_stretch=True, keep_ratio=False);
+                    widget_imagen.texture = img;
+                    boton_layout.add_widget(widget_imagen);
+
+                texto_layout = BoxLayout(orientation="vertical", size_hint=(0.6, 1), pos_hint={"center_y": 0.5}, spacing=0);
+                label_info_producto = Label(text=f"{data_producto['nombre']} - ${data_producto['precio']:,.2f}", size_hint=(1, 0.5), font_size=18, bold= True, halign="left", valign="bottom", text_size=(170, None), color=(1, 1, 1, 1));
+                label_cantidad = Label(text=f"x{p['cantidad']}", size_hint=(1, 0.5), font_size=16, halign="left", valign="top", text_size=(170, None), color=(174/255, 169/255, 169/255, 1));
+
+                texto_layout.add_widget(label_info_producto);
+                texto_layout.add_widget(label_cantidad);
+
+                boton_layout.add_widget(texto_layout);
+
+                ruta_basurero = str(ruta_imagenes / "Boton_basurero.png");
+                ruta_basurero_presionado = str(ruta_imagenes / "Boton_basurero_presionado.png");
+
+                boton_basurero = Button(size_hint=(None, None), width=45, height=45, background_normal=ruta_basurero, background_down=ruta_basurero_presionado, pos_hint={"center_y": 0.5});
+
+                boton_basurero.bind(on_press=lambda instance, posicion=i: self.borrar_producto(instance, posicion));
+
+                boton_layout.add_widget(boton_basurero);
+
+                # Agregar el layout principal al contenedor
+                self.ids.layout.add_widget(boton_layout);
+
+                precio_total += data_producto['precio'] * p['cantidad'];
+            self.ids.precio_total.text = f"${precio_total:,.2f}";
+        else:
+            label = Label(text="No hay productos en el carrito", font_size=18, color=(1, 1, 1, 1));
+            self.ids.layout.add_widget(label);
+            self.ids.precio_total.text = "$0.00";
+        scrollview.scroll_y = scroll_y;
+
+    def generar_factura(self):
+        if(len(self.productos_factura) > 0):
+            # Usa este para mostrar la factura
+            print(self.productos_factura);
+
+    def borrar_producto(self, instance, posicion):
+        productos.pop(posicion);
+        mostrar_noti("Éxito", "Producto eliminado del carrito");
+        self.on_enter();
 
 # Gestor de pantallas
 class WindowManager(ScreenManager):
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        super().__init__(**kwargs);
         self.transition = CardTransition(direction='right');
 
 # Designar archivo de diseño .kv
-kv = Builder.load_file('main.kv')
+kv = Builder.load_file('main.kv');
 
 class Eatclick(App):
     def build(self):
-        self.icon = str(ruta_archivo);
+        self.icon = str(ruta_imagenes / "Logo_notis.png");
         return kv;
 
 if __name__ == '__main__':
-    Eatclick().run()
+    Eatclick().run();

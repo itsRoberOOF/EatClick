@@ -12,6 +12,8 @@ WindowManager:
         name: "third"
     FourthWindow:
         name: "fourth"
+    FifthWindow:
+        name: "fifth"
 
 #Portada
 
@@ -48,7 +50,7 @@ WindowManager:
             bold: True
         
         Label:
-            text: "Ingresa un nombre para tu órden"
+            text: "Ingresa un nombre para tu orden"
             size_hint_y: None
             height: dp(18)
             font_size: 18
@@ -76,9 +78,8 @@ WindowManager:
             font_size: 18
             on_release: 
                 root.enviar_nombre()
-            background_normal: ""  # Esto evita el color predeterminado del botón
-            background_down: ""  # Esto evita el cambio de color cuando se presiona
-            background_color: (1, 0, 0, 1)
+            background_normal: "Boton_rojo.png"
+            background_down: "Boton_rojo_presionado.png"
             canvas.before:
                 # Dibuja un rectángulo con esquinas redondeadas
                 Color:
@@ -139,6 +140,7 @@ WindowManager:
                 allow_stretch: False
                 keep_ratio: True
                 pos_hint: {"center_y": 0.45}
+                on_press: root.manager.current = 'fifth'
             
             Widget:
                 size_hint: (None, None)
@@ -251,6 +253,7 @@ WindowManager:
                 allow_stretch: False
                 keep_ratio: True
                 pos_hint: {"center_y": 0.45}
+                on_press: root.manager.current = 'fifth'
             
             Widget:
                 size_hint: (None, None)
@@ -324,7 +327,7 @@ WindowManager:
                 allow_stretch: False
                 keep_ratio: True
                 pos_hint: {"center_y": 0.45}
-                on_press: root.manager.current = 'third'
+                on_press: root.manager.current = 'second'
 
             Label:
                 id: detalle_label
@@ -350,6 +353,7 @@ WindowManager:
                 allow_stretch: False
                 keep_ratio: True
                 pos_hint: {"center_y": 0.45}
+                on_press: root.manager.current = 'fifth'
             
             Widget:
                 size_hint: (None, None)
@@ -374,7 +378,7 @@ WindowManager:
 
             Label:
                 id: texto_producto
-                text: "Producto - $5.99"
+                text: ""
                 font_size: 20
                 bold: True
                 halign: 'center'
@@ -392,7 +396,7 @@ WindowManager:
 
             Label:
                 id: texto_descripcion
-                text: "Descripción"
+                text: ""
                 font_size: 18
                 halign: 'left'
                 valign: 'top'
@@ -423,9 +427,8 @@ WindowManager:
                 size_hint: (None, None)
                 height: 40
                 size_hint_x: 2
-                background_normal: ""  # Esto evita el color predeterminado del botón
-                background_down: ""  # Esto evita el cambio de color cuando se presiona
-                background_color: (1, 0, 0, 1)
+                background_normal: "Boton_rojo.png"
+                background_down: "Boton_rojo_presionado.png"
                 font_size: 18
                 
             Button:
@@ -433,10 +436,10 @@ WindowManager:
                 bold: True 
                 size_hint: (None, None)
                 height: 40
+                font_size: 24
                 size_hint_x: 0.5
-                background_normal: ""  # Esto evita el color predeterminado del botón
-                background_down: ""  # Esto evita el cambio de color cuando se presiona
-                background_color: (16/255, 67/255, 110/255, 1)
+                background_normal: "Boton_azul.png"
+                background_down: "Boton_azul_presionado.png"
                 on_release: 
                     root.botones_cantidad("resta")
             TextInput:
@@ -454,11 +457,131 @@ WindowManager:
             Button:
                 text: "+"
                 bold: True 
+                font_size: 20
                 size_hint: (None, None)
                 height: 40
                 size_hint_x: 0.5
-                background_normal: ""
-                background_down: ""
-                background_color: (14/255, 178/255, 33/255, 1)
+                background_normal: "Boton_verde.png"
+                background_down: "Boton_verde_presionado.png"
                 on_release: 
                     root.botones_cantidad("suma")
+<FifthWindow>:
+    name: "fifth"
+    canvas.before:
+        Color:
+            rgba: (6/255, 52/255, 91/255, 1)  # Color de fondo azul oscuro
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: 'vertical'
+
+        BoxLayout: 
+            orientation: 'horizontal'
+            size_hint_y: 0.15
+            
+            Widget:
+                size_hint: (None, None)
+                width: 20
+
+            Button:
+                size_hint: (None, None)
+                height: 50
+                width: 50
+                background_normal: "Atras.png"
+                background_down: "Atras_presionado.png"
+                halign: "center"
+                valign: "top"
+                border: [0, 0, 0, 0]
+                allow_stretch: False
+                keep_ratio: True
+                pos_hint: {"center_y": 0.45}
+                on_press: root.manager.current = 'second'
+
+            BoxLayout:
+                size_hint_x: 0.5
+                orientation: 'vertical'
+                pos_hint: {"center_y": 0.45}
+                Label:
+                    id: detalles_label
+                    text: "Detalles"
+                    font_size: 20
+                    bold: True
+                    halign: 'left'  
+                    valign: 'bottom'  
+                    text_size: self.size 
+                    padding_x: dp(20) 
+                    foreground_color: (255, 255, 255, 1)
+                
+                Label:
+                    id: factura_label
+                    text: "De la orden"
+                    font_size: 18
+                    halign: 'left'  
+                    valign: 'top'  
+                    text_size: self.size 
+                    padding_x: dp(20) 
+                    foreground_color: (255, 255, 255, 1)
+
+            Button:
+                size_hint: (None, None)
+                height: 50
+                width: 150
+                text: "Generar factura"
+                bold: True
+                font_size: 18
+                background_normal: "Boton_verde.png"
+                background_down: "Boton_verde_presionado.png"
+                halign: "center"
+                valign: "top"
+                border: [0, 0, 0, 0]
+                allow_stretch: False
+                keep_ratio: True
+                pos_hint: {"center_y": 0.45}
+                on_press: root.generar_factura()
+            
+            Widget:
+                size_hint: (None, None)
+                width: 20
+        
+        ScrollView:  
+            bar_width: 0
+            scroll_type: ['content']
+            size_hint_y: 1
+            GridLayout:
+                id: layout
+                cols: 1
+                size_hint_y: None
+                height: self.minimum_height
+                row_default_height: 80
+                row_force_default: True
+                spacing: dp(20)
+                padding: [20, 10, 20, 10]
+
+        BoxLayout:
+            size_hint_y: 0.1
+            halign: 'right'
+            orientation: 'horizontal'
+            Widget:
+                size_hint_x: 0.65
+            Label:
+                id: total
+                size_hint_x: 0.15
+                text: "Total:"
+                font_size: 18
+                padding_x: dp(20) 
+                foreground_color: (255, 255, 255, 1)
+                bold: True
+            Label:
+                id: precio_total
+                size_hint_x: 0.2
+                text: "$0.00"
+                font_size: 18
+                text_size: self.size
+                halign: 'right'
+                valign: 'middle'
+                foreground_color: (255, 255, 255, 1)
+            Widget:
+                size_hint: (None, None)
+                width: 20
