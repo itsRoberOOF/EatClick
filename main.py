@@ -1,3 +1,8 @@
+import datetime
+from logging import root
+import os
+import random
+from fpdf import FPDF
 from kivy.app import App  # Importa la clase base para crear una aplicación Kivy.
 from kivy.uix.screenmanager import ScreenManager, Screen  # Maneja múltiples pantallas.
 from kivy.lang import Builder  # Permite cargar archivos de diseño (.kv).
@@ -31,6 +36,8 @@ class FirstWindow(Screen):
     def enviar_nombre(self):
         # Accede al texto del TextInput
         nombre = self.ids.nombre_input.text;
+        global cliente 
+        cliente = nombre #nombre almacenado en variable global
         if(nombre == "" or len(nombre) < 2):
             mostrar_noti("Error", "Ingrese un nombre válido (mayor a 2 caracteres)");
             return;
@@ -221,6 +228,9 @@ class FourthWindow(Screen):
 
 class FifthWindow(Screen):
     productos_factura = [];
+    
+    def cerrar_app(self, instance):
+            self.stop()
 
     def on_enter(self):
         self.productos_factura = [];
@@ -275,8 +285,45 @@ class FifthWindow(Screen):
 
     def generar_factura(self):
         if(len(self.productos_factura) > 0):
-            # Usa este para mostrar la factura
-            print(self.productos_factura);
+            numero_orden = random.randint(10000, 99999) #genera un numero de orden random
+            fecha_hora_actual = datetime.datetime.now() #captura la fecha y hora actual
+            total = sum(producto['precio'] * producto['cantidad'] for producto in productos) #suma el valor de los productos
+            #utilizando libreria para reportes (fpdf
+            pdf = FPDF(orientation='P') #objeto del pd
+            pdf.add_page() #agrega una pagin
+            pdf.set_font("Arial", size=12) #fuente
+            #Encabezad
+            pdf.image('Loguito.png', x=10, y=8, w=30, h=20) #loguito del sistem
+            pdf.set_font("Arial", size=16, style='B') #fuente
+            pdf.cell(200, 10, txt="Factura Electrónica - EatClick", ln=1, align='C') 
+            pdf.cell(200, 10, txt=fecha_hora_actual.strftime("%Y-%m-%d %H:%M:%S"), ln=1, align='C')
+            pdf.cell(200, 10, txt=f"Cliente: {cliente} - {numero_orden}", ln=1, align='C') #cliente que se obtiene de variable global en FirstWindow
+            
+            pdf.cell(200, 5, txt="", ln=1) #separacion visual
+            
+            pdf.cell(100, 10, txt="Producto:", ln=0)
+            pdf.cell(40, 10, txt="Cantidad:", ln=0)
+            pdf.cell(60, 10, txt="Precio Total:", ln=1)
+            for producto in productos: #for que recorre la lista de 'productos' y setea los valores con formato
+                pdf.cell(100, 10, txt=producto['nombre'], ln=0)
+                pdf.cell(40, 10, txt=str(producto['cantidad']), ln=0)
+                pdf.cell(60, 10, txt=f"${producto['precio'] * producto['cantidad']:.2f}", ln=1)
+                
+            pdf.cell(200, 5, txt="", ln=1)
+            
+        pdf.cell(160, 10, txt="Total:", ln=0)    
+        pdf.cell(40, 10, txt=f"${total:.2f}", ln=1) #total de compra
+        
+        carpeta_facturas = "facturas_restaurante" #crea la carpeta para almacenar facturas
+        if not os.path.exists(carpeta_facturas):
+            os.makedirs(carpeta_facturas) #si no existe
+
+        #guarda el archivo y almacena la ruta en la variable
+        ruta_archivo = os.path.join(carpeta_facturas, f"factura_{numero_orden}_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf")
+
+        pdf.output(ruta_archivo) #guardamos el pdf
+        mostrar_noti("Factura creada", "Su factura ha sido creada con éxito!") #mensaje de exito
+        self.manager.current = 'first' #regresa al inicio
 
     def borrar_producto(self, instance, posicion):
         productos.pop(posicion);
