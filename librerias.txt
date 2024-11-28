@@ -4,3 +4,5 @@ pip install firebase-admin
 python -m pip install "kivy[base]" kivy_examples
 3- Notificaciones
 pip install winotify
+4- FPDF (factura)
+pip install fpdf
