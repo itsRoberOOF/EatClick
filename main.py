@@ -26,9 +26,14 @@ productos = [];
 
 ruta_imagenes = Path(__file__).parent;
 
+# Esta función muestra una notificación para el usuario
+# Recibe los parametros de titulo y mensaje, el titulo es el titulo de la notificacion y el mensaje es el mensaje que se mostrara 
 def mostrar_noti(titulop:str, msgp:str):
+    # Configurar la notifación
     toast = Notification(app_id="EatClick", title=titulop, msg=msgp, duration="short", icon=str(ruta_imagenes / "Logo_notis.png"));
+    # Establecer el sonido de la notificación
     toast.set_audio(audio.Reminder, loop=False);
+    # Mostrar la notificación
     toast.show();
 
 # Define nuestras diferentes pantallas
