@@ -27,7 +27,6 @@ productos = [];
 ruta_imagenes = Path(__file__).parent;
 
 # Esta función muestra una notificación para el usuario
-
 # Recibe los parametros de titulo y mensaje, el titulo es el titulo de la notificacion y el mensaje es el mensaje que se mostrara 
 def mostrar_noti(titulop:str, msgp:str):
     # Configurar la notifación
