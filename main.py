@@ -82,7 +82,7 @@ class SecondWindow(Screen):
             nombre = categoria['nombre_categoria']; # Se encuentra en la base de datos
             imagen = categoria['imagen']; # Son las imágenes de los productos
 
-            # Se crea un layout para organizar los elementos de la parte superior
+            # Se crea un layout para organizar los elementos
             boton_layout = BoxLayout(orientation="vertical");
 
             if(imagen!=None):
@@ -99,7 +99,7 @@ class SecondWindow(Screen):
             
             #Crea un espacio en blanco luego de escribir el nombre
             boton = Button(text=f"{nombre}",size_hint=(1,0.3),background_normal="", background_down="", background_color=(16/255, 67/255, 110/255, 1), font_size=17, halign="center", valign="middle");
-            #Permite que se pueda presionar el botón del carrito
+            #Permite que se puedan presionar los botones
             boton.bind(on_press=lambda instance, nombre=nombre: self.boton_presionado(instance, None, nombre));
             boton_layout.add_widget(boton);
 
@@ -109,7 +109,7 @@ class SecondWindow(Screen):
         # Permite que se mantenga la posición del scroll
         scrollview.scroll_y = scroll_y;
 
-    # Esta función permite que se pueda         
+    # Esta función permite que se puedan detectar los clics en botones o imágenes y ejecuta la acción
     def boton_presionado(self, instance, touch, nombre):
         if touch:
             if not instance.collide_point(*touch.pos): # para determinar que la posición del toque está dentro del widget
@@ -119,35 +119,47 @@ class SecondWindow(Screen):
         self.manager.current = "third";
         self.manager.get_screen("third").actualizar_label_categoria(nombre)
 
+# Esta clase define la tercera pantalla de la aplicación (donde se muestran los productos de la categoría seleccionada)
 class ThirdWindow(Screen):
+    # Esta función actualiza la pantalla con la categoría de la pantalla 2 para decidir si seleccionar un producto
+    # Recibe el parámetro de categoriap, el cual se utiliza para trabajar con la categoría seleccionada
     def actualizar_label_categoria(self, categoriap):
+        # Almacena la categoría seleccionada
         self.categoria = categoriap;
         # Actualiza el texto de la categoria
         self.ids.categoria_label.text = f"{self.categoria}";
 
     def on_enter(self):
+        # Para que no se dé click al intentar dar scroll
         scrollview = self.ids.layout.parent;
         scroll_y = scrollview.scroll_y;
         
         # Limpiar widgets previos
         self.ids.layout.clear_widgets();
-
+        
+        # Para acceder a la información de la base de datos
         data_productos = api.leer_productos(self.categoria);
         data_productos = api.imagenes_coleccion(data_productos);
 
         # Mostrar productos con botones para seleccionar
         for producto in data_productos:
-            id = producto['id'];
-            nombre = producto['nombre'];
-            precio = producto['precio'];
-            imagen = producto['imagen'];
+            id = producto['id']; #Para obtener el id del producto desde la base de datos
+            nombre = producto['nombre']; #Para obtener el nombre de la base de datos
+            precio = producto['precio']; #Para obtener el precio de la base de datos
+            imagen = producto['imagen']; #Para obtener la imagen de la base de datos
 
+            # Se crea un layout para organizar los elementos
             boton_layout = BoxLayout(orientation="vertical");
 
             if(imagen!=None):
+                # Convierte la imagen para que se cargue correctamente (Se crea una textura)
                 img = CoreImage(imagen, ext="png").texture;
+                # Crea un widget para alojar ahí la imagen
                 widget_imagen = Image(source = "", size_hint=(1,0.7), allow_stretch=True, keep_ratio=False);
+                # Asigna la textura a la imagen
                 widget_imagen.texture = img;
+
+                # Permite que se pueda dar click a la imagen
                 widget_imagen.bind(on_touch_down=lambda instance, touch, id=id: self.boton_presionado(instance, touch, id));
                 boton_layout.add_widget(widget_imagen);
     
@@ -156,68 +168,97 @@ class ThirdWindow(Screen):
 
             # Habilitar el uso de formato para el texto
             boton.markup = True;
-            boton.text = f"[b]{nombre}[/b]\n${precio:,.2f}";
+            boton.text = f"[b]{nombre}[/b]\n${precio:,.2f}"; # Da formato en negrita para el nombre y el precio con dos decimales
             
+            #Permite que se puedan presionar los botones
             boton.bind(on_press=lambda instance, id=id: self.boton_presionado(instance, None, id));
 
             # Añadir el botón al layout
             boton_layout.add_widget(boton);
-    
+
+            #Agrega el widget de la imagen al layout    
             self.ids.layout.add_widget(boton_layout);
         
+        #Mantiene la posición del scroll
         scrollview.scroll_y = scroll_y;
-
+    
+    # Esta función permite que se puedan detectar los clics en botones o imágenes y ejecuta la acción
     def boton_presionado(self, instance, touch, id):
         if touch:
-            if not instance.collide_point(*touch.pos):
+            if not instance.collide_point(*touch.pos): # para determinar que la posición del toque está dentro del widget
                 return;
-        self.manager.current = "fourth";
-        self.manager.get_screen("fourth").recibir_id(id);
+        self.manager.current = "fourth"; # Cambia a la cuarta pantalla al presionar el botón
+        self.manager.get_screen("fourth").recibir_id(id); # Pasa el id del producto seleccionado a la pantalla siguiente
 
+# Esta clase define la cuarta pantalla de la aplicación (donde se visualizan los detalles de un producto seleccionado)
 class FourthWindow(Screen):
+    # Esta función es para recibir el id del producto seleccionado
+    # Trabaja con el parámetro idp, que es un identificador único del producto seleccionado
     def recibir_id(self, idp):
         self.id = idp;
 
+    # Esta función permite que se ejecute todo lo demás al entrar a la pantalla
     def on_enter(self):
+        # Inicializa el campo de cantidad con el valor por defecto que es 1
         self.ids.input_cantidad.text = "1";
 
+        # Obtiene los datos del producto desde la base de datos
         data_producto = api.leer_producto(self.id);
+        # Muestra el nombre y precio del producto
         self.ids.texto_producto.text = f"{data_producto['nombre']} - ${data_producto['precio']:,.2f}";
 
+        # Configura la imagen del producto si existe; sino, asigna una imagen por defecto
         if(data_producto['imagen'] != None):
             img = CoreImage(data_producto['imagen'], ext="png").texture;
             self.ids.imagen_producto.texture = img;
         else:
-            self.ids.imagen_producto.source = str(ruta_imagenes / "Default.png");
+            self.ids.imagen_producto.source = str(ruta_imagenes / "Default.png"); #Imagen por defecto
         
+        # Muestra la descripción del producto
         self.ids.texto_descripcion.text = data_producto['descripcion'];
+        # Permite que se pueda agregar el producto al dar click al botón
         self.ids.boton_enviar.bind(on_press=self.agregar_producto);
     
+    # Función que se ejecuta al salir de la pantalla
     def on_leave(self):
+        # Limpia los datos del producto al cambiar de pantalla
         self.ids.imagen_producto.texture = None;
         self.ids.imagen_producto.source = str(ruta_imagenes / "Default.png");
         self.ids.texto_producto.text = "";
         self.ids.texto_descripcion.text = "";
 
+    # Esta función agrega el producto seleccionado al carrito
+    # Funciona con el parámetro instance, el cual hace referencia al botón que activó la función
     def agregar_producto(self, instance):
+        # Obtiene los datos del producto desde la base de datos
         data_producto = api.leer_producto(self.id);
+        # Valida la cantidad ingresada por el usuario
         validar = self.validar_cantidad();
+        
         if(validar):
+            # Agrega la cantidad seleccionada al producto
             cantidad = int(self.ids.input_cantidad.text);
             data_producto['cantidad'] = cantidad;
-            data_producto['id'] = self.id;
+            data_producto['id'] = self.id; # Se obtiene el producto por medio del id dentro de la base de datos
             productos.append(data_producto);
+            # Añade el producto al carrito y valida duplicados
             self.validar_productos_duplicados();
+            # Cambia a la pantalla 2, la del menú
             self.manager.current = "second";
+            # Muestra una notificación de que el producto fue agregado con éxito
             mostrar_noti("Éxito", "Producto agregado al carrito");
     
+    # Esta función es para evitar productos duplicados en el carrito y en lugar de eso, sumarlos
     def validar_productos_duplicados(self):
         productos_duplicados = [];
+
+        # Busca duplicados basándose en el id del producto
         for i, p in enumerate(productos):
             if(p['id'] == self.id): 
                 info_producto = {"posicion": i, "cantidad": p['cantidad']};
                 productos_duplicados.append(info_producto);
         
+        # Si hay duplicados, suma las cantidades y elimina las nuevas entradas que se podrían generar en el carrito
         if(len(productos_duplicados) > 1):
             cantidad_total = 0;
             for i in productos_duplicados:
@@ -225,17 +266,22 @@ class FourthWindow(Screen):
             productos[productos_duplicados[0]['posicion']]['cantidad'] = cantidad_total;
             for i in range(1, len(productos_duplicados)):
                 productos.pop(productos_duplicados[i]['posicion']);
-
+    
+    # Esta función sirve para incrementar o disminuir la cantidad seleccionada de productos
+    # Funciona con el parámetro operacion, quien indica si se debe sumar o restar ('suma' o 'resta')
     def botones_cantidad(self, operacion:str):
         cantidad = int(self.ids.input_cantidad.text);
+
         if(operacion == 'suma' and cantidad < 99):
             cantidad = int(cantidad) + 1;
         elif(operacion == 'resta' and cantidad > 1):
             cantidad = int(cantidad) - 1;
         else:
-            mostrar_noti("Error", "La cantidad debe estar entre 1 y 99");
+            mostrar_noti("Error", "La cantidad debe estar entre 1 y 99"); #Si la cantidad seleccionada es menor a 1 o mayor a 99, da un mensaje de error
+        # Actualiza el campo de cantidad
         self.ids.input_cantidad.text = str(cantidad);
 
+    # Esta función sirve para validar que la cantidad ingresada sea correcta
     def validar_cantidad(self):
         try:
             cantidad = int(self.ids.input_cantidad.text);
@@ -250,6 +296,7 @@ class FourthWindow(Screen):
             else:
                 return True;
         except:
+            # Notifica si el valor ingresado no es un número
             mostrar_noti("Error", "Ingrese un número válido (entre 1 y 99)");
             return False;
 
