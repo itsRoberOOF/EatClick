@@ -2,7 +2,7 @@ import datetime
 from logging import root
 import os
 import random
-from fpdf import FPDF
+from fpdf import FPDF # Para poder generar el PDF de la factura.
 from kivy.app import App  # Importa la clase base para crear una aplicación Kivy.
 from kivy.uix.screenmanager import ScreenManager, Screen  # Maneja múltiples pantallas.
 from kivy.lang import Builder  # Permite cargar archivos de diseño (.kv).
@@ -13,22 +13,24 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import CardTransition
 from kivy.uix.label import Label
 
-from winotify import Notification, audio
+from winotify import Notification, audio # Permite generar las notificaciones en la pantalla
 
 from pathlib import Path;
 
 import api
 
+# Para las medidas de la pantalla:
 Window.size = (400, 600)  # Ancho: 400, Alto: 300
 
-cliente = "";
-productos = [];
+cliente = ""; # Es para guardar el nombre del cliente
+productos = []; # Para guardar la lista de productos que se van a pedir
 
+#
 ruta_imagenes = Path(__file__).parent;
 
-# Esta función muestra una notificación para el usuario
-# Recibe los parametros de titulo y mensaje, el titulo es el titulo de la notificacion y el mensaje es el mensaje que se mostrara 
-def mostrar_noti(titulop:str, msgp:str):
+# Esta función permite que se muestren las notificaciones para el usuario
+# Recibe los parametros de "titulop" y "msgp", titulop es el titulo de la notificacion y msgp es el mensaje que se mostrará
+def mostrar_noti(titulop:str, msgp:str): #Ambos parámetros son strings
     # Configurar la notifación
     toast = Notification(app_id="EatClick", title=titulop, msg=msgp, duration="short", icon=str(ruta_imagenes / "Logo_notis.png"));
     # Establecer el sonido de la notificación
@@ -36,67 +38,84 @@ def mostrar_noti(titulop:str, msgp:str):
     # Mostrar la notificación
     toast.show();
 
-# Define nuestras diferentes pantallas
+# Esta clase define la primera pantalla dentro de la aplicación (donde se encuentra el logo y el input para ingresar el nombre del usuario)
 class FirstWindow(Screen):
     def enviar_nombre(self):
         # Accede al texto del TextInput
         nombre = self.ids.nombre_input.text;
-        global cliente;
+        global cliente; #Se accede a la variable fuera de la clase para poder trabajarla
         cliente = nombre #nombre almacenado en variable global
-        if(nombre == "" or len(nombre) < 2):
-            mostrar_noti("Error", "Ingrese un nombre válido (mayor a 2 caracteres)");
+        if(nombre == "" or len(nombre) < 2): #Para validar el nombre
+            mostrar_noti("Error", "Ingrese un nombre válido (mayor a 2 caracteres)"); #Por si el nombre ingresado no es correcto
             return;
         else:
             # Pasa el nombre a la segunda pantalla
             self.manager.get_screen("second").actualizar_label(nombre);
             self.manager.current = "second";
-
+    
+    # 
     def on_leave(self):
         self.ids.nombre_input.text = "";
 
+# Esta clase define la segunda pantalla dentro de la aplicación (donde se encuentra el menú)
 class SecondWindow(Screen):
+    # Esta función actualiza el texto del Label en la pantalla 2 para que tenga el nombre que fue ingresado en la pantalla 1
+    # Recibe el parámetro de nombre
     def actualizar_label(self, nombre):
-        # Actualiza el texto del Label en la pantalla 2
         self.ids.nombre_label.text = f"{nombre}";
-        
+
+    # Esta función permite que se pueda entrar a uno de los productos del menú
     def on_enter(self):
+        # Para que no se dé click al intentar dar scroll
         scrollview = self.ids.layout.parent;
         scroll_y = scrollview.scroll_y;
         
         # Limpiar widgets previos
         self.ids.layout.clear_widgets();
 
+        # Para acceder a la información de la base de datos
         data_categorias = api.leer_coleccion('categorias');
         data_categorias = api.imagenes_coleccion(data_categorias);
 
         # Mostrar productos con botones para seleccionar
         for categoria in data_categorias:
-            nombre = categoria['nombre_categoria'];
-            imagen = categoria['imagen'];
+            nombre = categoria['nombre_categoria']; # Se encuentra en la base de datos
+            imagen = categoria['imagen']; # Son las imágenes de los productos
 
+            # Se crea un layout para organizar los elementos de la parte superior
             boton_layout = BoxLayout(orientation="vertical");
 
             if(imagen!=None):
+                # Convierte la imagen para que se cargue correctamente (Se crea una textura)
                 img = CoreImage(imagen, ext="png").texture;
+                # Crea un widget para alojar ahí la imagen
                 widget_imagen = Image(source = "", size_hint=(1,0.7), allow_stretch=True, keep_ratio=False);
+                # Asigna la textura a la imagen
                 widget_imagen.texture = img;
+
+                # Permite que se pueda dar click a la imagen
                 widget_imagen.bind(on_touch_down=lambda instance, touch, nombre=nombre: self.boton_presionado(instance, touch, nombre));
                 boton_layout.add_widget(widget_imagen);
-
+            
+            #Crea un espacio en blanco luego de escribir el nombre
             boton = Button(text=f"{nombre}",size_hint=(1,0.3),background_normal="", background_down="", background_color=(16/255, 67/255, 110/255, 1), font_size=17, halign="center", valign="middle");
+            #Permite que se pueda presionar el botón del carrito
             boton.bind(on_press=lambda instance, nombre=nombre: self.boton_presionado(instance, None, nombre));
             boton_layout.add_widget(boton);
 
+            #Agrega el widget de la imagen al layout
             self.ids.layout.add_widget(boton_layout);
-
+        
+        # Permite que se mantenga la posición del scroll
         scrollview.scroll_y = scroll_y;
-            
+
+    # Esta función permite que se pueda         
     def boton_presionado(self, instance, touch, nombre):
         if touch:
-            if not instance.collide_point(*touch.pos):
+            if not instance.collide_point(*touch.pos): # para determinar que la posición del toque está dentro del widget
                 return;
 
-        # Pasa la categoría a la tercera pantalla
+        # Pasa a la tercera pantalla según la categoría seleccionada
         self.manager.current = "third";
         self.manager.get_screen("third").actualizar_label_categoria(nombre)
 
