@@ -222,8 +222,8 @@ class FourthWindow(Screen):
     # Función que se ejecuta al salir de la pantalla. Limpia los datos del producto al cambiar de pantalla para evitar que queden datos inconsistentes
     def on_leave(self):
         # Limpia los datos del producto al cambiar de pantalla
-        self.ids.imagen_producto.texture = None;
-        self.ids.imagen_producto.source = str(ruta_imagenes / "Default.png");
+        textura_imagen = CoreImage(str(ruta_imagenes / "Default.png"), ext="png").texture;
+        self.ids.imagen_producto.texture = textura_imagen;
         self.ids.texto_producto.text = "";
         self.ids.texto_descripcion.text = "";
 

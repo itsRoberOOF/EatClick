@@ -55,8 +55,8 @@ def leer_coleccion(nombre_coleccion:str):
 
         # Retorno
         return data_documentos;
-    except:
-        print("Error en la base de datos");
+    except Exception as e:
+        print(f"Error en la base de datos: {e}");
         return None;
 
 #obtiene las imagenes almacenadas en la base de datos.
@@ -75,8 +75,8 @@ def imagenes_coleccion(diccionario:dict): #recibe un directorio como parametro
                 doc['imagen'] = None; #se setea como vacio
 
         return data_documentos; #se retorna
-    except:
-        print("Error en la base de datos");
+    except Exception as e:
+        print(f"Error en la base de datos: {e}");
         return None;
 
 #lee la coleccion de productos: SELECT a productos
@@ -88,8 +88,8 @@ def leer_productos(categoria:str):
             if(i['categoria'] == categoria): #se evalua que la categoria del producto pertenezca a la que se pasa como parametro
                 productos_filtrados.append(i); #se agregan a la lista filtrada
         return productos_filtrados; #se retorna la lista filtrada por categoria
-    except:
-        print("Error en la base de datos");
+    except Exception as e:
+        print(f"Error en la base de datos: {e}");
         return None;
 
 #lee los productos por ID
@@ -106,6 +106,6 @@ def leer_producto(id:str):
                 else:
                     i['imagen'] = None; #se setea como vacio
                 return i; #retornamos i
-    except:
-        print("Error en la base de datos");
+    except Exception as e:
+        print(f"Error en la base de datos: {e}");
         return None;
