@@ -97,7 +97,7 @@ WindowManager:
     BoxLayout: # Organiza los elementos verticalmente dentro de la ventana.
         orientation: 'vertical'
         
-        
+
         BoxLayout: 
             orientation: 'horizontal' # Subcontenedor para el menu superior
             size_hint_y: 0.15  # Altura del contenedor
@@ -144,6 +144,10 @@ WindowManager:
                 size_hint: (None, None) #Sin altura ni ancho en porcentaje, especificos
                 width: 20
         
+        Widget: # Widget para espacio en blanco
+            size_hint: (None, None) #Sin altura ni ancho en porcentaje, especificos
+            height: 10
+
         ScrollView:  # Sección para el ScrollView (Para el desplazamiento)
             do_scroll_x: False #Sin scroll en x
             bar_width: 0 #Para no mostrar el scroll
@@ -156,7 +160,7 @@ WindowManager:
                 row_default_height: dp(150) #Altura de las filas
                 row_force_default: True #Forzar que todas las filas tengan el mismo tamaño
                 spacing: dp(20) #Espacio entre filas
-                padding: [20, 10, 20, 0]
+                padding: [20, 0, 20, 0]
 
         Label:  # Título "Nota"
             id: nota_label
@@ -256,6 +260,11 @@ WindowManager:
             Widget: # Widget para dejar un espacio
                 size_hint: (None, None)
                 width: 20
+
+        Widget: # Widget para espacio en blanco
+            size_hint: (None, None) #Sin altura ni ancho en porcentaje, especificos
+            height: 10
+
         ScrollView:  # Sección para el ScrollView
             do_scroll_x: False #Sin scroll en x
             bar_width: 0 #Para no mostrar el scroll
@@ -268,7 +277,7 @@ WindowManager:
                 row_default_height: dp(150) #Tamaño de las filas
                 row_force_default: True #Forzar que todas las filas tengan el mismo alto
                 spacing: dp(20)
-                padding: [20, 10, 20, 0]
+                padding: [20, 0, 20, 0]
 
         Label:  # Título "Nota"
             id: nota_label
