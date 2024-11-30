@@ -1,23 +1,23 @@
-import datetime
-from logging import root
-import os
-import random
+import datetime # Para trabajar con fechas y horas
+from logging import root # Para registros
+import os # De Python. Es para interacción con la interfaz
+import random # Para los números de las facturas
 from fpdf import FPDF # Para poder generar el PDF de la factura.
 from kivy.app import App  # Importa la clase base para crear una aplicación Kivy.
 from kivy.uix.screenmanager import ScreenManager, Screen  # Maneja múltiples pantallas.
 from kivy.lang import Builder  # Permite cargar archivos de diseño (.kv).
 from kivy.uix.button import Button  # Importa un botón para la interfaz.
-from kivy.uix.image import Image, CoreImage
+from kivy.uix.image import Image, CoreImage # Widgets para imágenes
 from kivy.core.window import Window  # Importar la clase Window
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.screenmanager import CardTransition
-from kivy.uix.label import Label
+from kivy.uix.screenmanager import CardTransition # Para las transiciones de las pantallas
+from kivy.uix.label import Label # Para mostrar las etiquetas en la interfaz
 
 from winotify import Notification, audio # Permite generar las notificaciones en la pantalla
 
-from pathlib import Path;
+from pathlib import Path; # Proporciona la clase para trabajar con rutas de archivos 
 
-import api
+import api # Para la unión de archivos
 
 # Para las medidas de la pantalla:
 Window.size = (400, 600)  # Ancho: 400, Alto: 300
@@ -409,7 +409,7 @@ class FifthWindow(Screen):
         ruta_archivo = os.path.join(carpeta_facturas, f"factura_{numero_orden}_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf");
 
         pdf.output(ruta_archivo); #guardamos el pdf
-        
+
         # Notificación de éxito y reinicio de variables
         mostrar_noti("Factura creada", "Su factura ha sido creada con éxito!"); #mensaje de exito
         productos.clear();

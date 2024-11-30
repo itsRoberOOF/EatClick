@@ -4,19 +4,18 @@
 #Ventanas declaradas para trabajar a lo largo del código
 #:import Factory kivy.factory.Factory
 WindowManager:
-	FirstWindow:
-        name: "first"
+	FirstWindow: # Ventana principal, donde el usuario ingresa su nombre.
+        name: "first" # Define el nombre de la ventana
 	SecondWindow:
-        name: "second"
+        name: "second" # Segunda ventana de la aplicación.
     ThirdWindow:
-        name: "third"
+        name: "third" # Tercera ventana de la aplicación.
     FourthWindow:
-        name: "fourth"
+        name: "fourth" # Cuarta ventana de la aplicación.
     FifthWindow:
-        name: "fifth"
+        name: "fifth" # Quinta ventana de la aplicación.
 
-#Portada
-
+#Portada. Diseño de la ventana principal (FirstWindow).
 <FirstWindow>:
     #Colores
 	canvas.before:
@@ -30,11 +29,13 @@ WindowManager:
 	name: "first"
     id: layout
     
+    #Layout: Organiza los elementos en una caja (BoxLayout) con orientación vertical.
     BoxLayout:
         spacing: 20
         padding: [10, 50, 10, 60]  # [izquierda, arriba, derecha, abajo]
         orientation: 'vertical'
 
+        # Widget para mostrar una imagen.
         Image:
 			source: "Loguito.png"
 			size_hint: (1, None)  # Ocupa el 100% del ancho y altura automática
@@ -42,20 +43,23 @@ WindowManager:
             allow_stretch: True  # Permitir que la imagen se estire
             keep_ratio: True  # Mantener la proporción original de la imagen
 
+        # Widget para mostrar un texto (etiqueta).
         Label:
             text: "Bienvenido"
             size_hint_y: None
             height: dp(25)
             font_size: 28
             bold: True
-        
+
+        # Otra etiqueta para mostrar más texto.        
         Label:
             text: "Ingresa un nombre para tu orden"
             size_hint_y: None
             height: dp(18)
             font_size: 18
             bold: False
-        
+
+        # Widget para el campo de entrada de texto.        
         TextInput:  # Campo de entrada
             id: nombre_input
             multiline: False  # Solo una línea de texto
@@ -68,6 +72,7 @@ WindowManager:
             size_hint_x: 0.6
             pos_hint: {"center_x": 0.5}
 
+        # Widget para el botón interactivo.
         Button:
             text: "Continuar"
             bold: True
@@ -88,6 +93,8 @@ WindowManager:
                     pos: self.pos
                     size: self.size
                     radius: [20]  # Ajusta el radio para los bordes redondeados
+
+# Diseño de la segunda ventana
 <SecondWindow>:
     canvas.before:
         Color:
@@ -96,8 +103,8 @@ WindowManager:
             pos: self.pos
             size: self.size
 
-    name: "second"
-    BoxLayout:
+    name: "second" # Asigna el nombre de la ventana para referencia interna.
+    BoxLayout: # Organiza los elementos verticalmente dentro de la ventana.
         orientation: 'vertical'
         
         BoxLayout: 
@@ -106,8 +113,8 @@ WindowManager:
             
             BoxLayout:
                 orientation: 'vertical'
-                size_hint_x: 0.85
-                Label:
+                size_hint_x: 0.85 # 85% del ancho
+                Label: # Etiqueta para "Cliente"
                     id: cliente_label
                     text: "Cliente:"
                     font_size: 20
@@ -118,7 +125,7 @@ WindowManager:
                     padding_x: dp(20) 
                     foreground_color: (255, 255, 255, 1)
                 
-                Label:
+                Label: # Etiqueta para nombre del cliente
                     id: nombre_label
                     text: ""
                     font_size: 18
@@ -128,7 +135,7 @@ WindowManager:
                     padding_x: dp(20) 
                     foreground_color: (255, 255, 255, 1)
             
-            Button:
+            Button: # Botón carrito
                 size_hint: (None, None)
                 height: 50
                 width: 50
@@ -140,13 +147,13 @@ WindowManager:
                 allow_stretch: False
                 keep_ratio: True
                 pos_hint: {"center_y": 0.45}
-                on_press: root.manager.current = 'fifth'
+                on_press: root.manager.current = 'fifth' # Cambia a la quinta ventana
             
             Widget:
                 size_hint: (None, None)
-                width: 20
+                width: 20 # Espacio en blanco
         
-        ScrollView:  # Sección para el ScrollView
+        ScrollView:  # Sección para el ScrollView (Para el desplazamiento)
             do_scroll_x: False
             bar_width: 0
             scroll_type: ['content']
@@ -192,10 +199,10 @@ WindowManager:
             pos: self.pos
             size: self.size    
 
-    BoxLayout:
+    BoxLayout: # Disposición vertical de los elementos
         orientation: 'vertical'
 
-        BoxLayout: 
+        BoxLayout: # Contenedor superior con botón de retroceso
             orientation: 'horizontal'
             size_hint_y: 0.15  # Altura del contenedor
             
@@ -203,7 +210,7 @@ WindowManager:
                 size_hint: (None, None)
                 width: 20
 
-            Button:
+            Button: # Botón retroceso
                 size_hint: (None, None)
                 height: 50
                 width: 50
@@ -215,12 +222,12 @@ WindowManager:
                 allow_stretch: False
                 keep_ratio: True
                 pos_hint: {"center_y": 0.45}
-                on_press: root.manager.current = 'second'
+                on_press: root.manager.current = 'second' # Regresa a la segunda ventana
 
             BoxLayout:
                 orientation: 'vertical'
                 size_hint_x: 0.85
-                Label:
+                Label: # Etiqueta para "Categoría"
                     id: cliente_label
                     text: "Categoría:"
                     font_size: 20
@@ -241,7 +248,7 @@ WindowManager:
                     padding_x: dp(10) 
                     foreground_color: (255, 255, 255, 1)
             
-            Button:
+            Button: #Botón del carrito
                 size_hint: (None, None)
                 height: 50
                 width: 50
@@ -295,10 +302,10 @@ WindowManager:
             foreground_color: (255, 255, 255, 1)
 
 <FourthWindow>:
-    name: "fourth"
+    name: "fourth" # Nombre de la pantalla
     canvas.before:
         Color:
-            rgba: (6/255, 52/255, 91/255, 1)
+            rgba: (6/255, 52/255, 91/255, 1) #Color de fondo
         Rectangle:
             pos: self.pos
             size: self.size
@@ -307,15 +314,15 @@ WindowManager:
         orientation: 'vertical'
         id: layout
 
-        BoxLayout: 
+        BoxLayout:  # Contenedor superior con botón de retroceso
             orientation: 'horizontal'
             size_hint_y: 0.15
             
-            Widget:
+            Widget: #Espacio en blanco
                 size_hint: (None, None)
-                width: 20
+                width: 20 
 
-            Button:
+            Button: #Botón de retroceso
                 size_hint: (None, None)
                 height: 50
                 width: 50
@@ -327,9 +334,9 @@ WindowManager:
                 allow_stretch: False
                 keep_ratio: True
                 pos_hint: {"center_y": 0.45}
-                on_press: root.manager.current = 'second'
+                on_press: root.manager.current = 'second' # Regresa a la segunda ventana
 
-            Label:
+            Label: # Título "Detalles del producto"
                 id: detalle_label
                 size_hint_x: 0.85
                 text: "Detalles del producto:"
@@ -341,7 +348,7 @@ WindowManager:
                 padding_x: dp(10) 
                 foreground_color: (255, 255, 255, 1)
             
-            Button:
+            Button: # Botón carrito
                 size_hint: (None, None)
                 height: 50
                 width: 50
@@ -353,17 +360,17 @@ WindowManager:
                 allow_stretch: False
                 keep_ratio: True
                 pos_hint: {"center_y": 0.45}
-                on_press: root.manager.current = 'fifth'
+                on_press: root.manager.current = 'fifth' # Cambia a la quinta ventana
             
             Widget:
                 size_hint: (None, None)
-                width: 20
+                width: 20 # Espacio en blanco
     
-        Widget:
+        Widget: # Espacio adicional
             size_hint_y: None
             height: 10
 
-        BoxLayout:
+        BoxLayout: # Contenedor de detalles del producto
             orientation: "vertical"
             size_hint_x: 0.9
             spacing: dp(10)  # Añade un pequeño espacio entre los elementos (puedes ajustarlo)
@@ -371,12 +378,12 @@ WindowManager:
 
             canvas.before:
                 Color:
-                    rgba: (16/255, 67/255, 110/255, 1)
+                    rgba: (16/255, 67/255, 110/255, 1) # Fondo azul más claro
                 Rectangle:
                     pos: self.pos
                     size: self.size
 
-            Label:
+            Label: # Texto del producto
                 id: texto_producto
                 text: ""
                 font_size: 20
@@ -386,7 +393,7 @@ WindowManager:
                 size_hint_y: None
                 height: dp(30)
 
-            Image:
+            Image: # Imagen del producto
                 id: imagen_producto
                 source: "Default.png"
                 size_hint: (0.9, None) 
@@ -394,7 +401,7 @@ WindowManager:
                 allow_stretch: True
                 pos_hint: {"center_x": 0.5}
 
-            Label:
+            Label: # Descripción del producto
                 id: texto_descripcion
                 text: ""
                 font_size: 18
@@ -406,11 +413,11 @@ WindowManager:
                 text_size: self.size
                 pos_hint: {"center_x": 0.5}
 
-            Widget:
+            Widget: # Espacio en blanco
                 size_hint_y: None
                 height: dp(70) 
 
-        GridLayout:
+        GridLayout: # Botones de acción (Agregar a la orden y cantidad)
             cols: 4
             size_hint_y: 0.2
             size_hint_x: 0.9
@@ -420,7 +427,8 @@ WindowManager:
             height: self.minimum_height  # Ajusta la altura al contenido
             padding: [0, 20, 0, 20]
             pos_hint: {"center_x": 0.5}
-            Button:
+
+            Button: # Botón para agregar a la orden
                 id: boton_enviar
                 text: "Agregar a la orden"
                 bold: True 
@@ -431,7 +439,7 @@ WindowManager:
                 background_down: "Boton_rojo_presionado.png"
                 font_size: 18
                 
-            Button:
+            Button: # Botón para restar cantidad
                 text: "-"
                 bold: True 
                 size_hint: (None, None)
@@ -442,7 +450,8 @@ WindowManager:
                 background_down: "Boton_azul_presionado.png"
                 on_release: 
                     root.botones_cantidad("resta")
-            TextInput:
+
+            TextInput: # Input para ingresar la cantidad
                 id: input_cantidad
                 text: "1"
                 font_size: 20
@@ -454,7 +463,8 @@ WindowManager:
                 height: 40
                 size_hint_x: 0.5
                 background_color: (1, 1, 1, 1)
-            Button:
+
+            Button: # Botón para sumar cantidad
                 text: "+"
                 bold: True 
                 font_size: 20
@@ -465,6 +475,8 @@ WindowManager:
                 background_down: "Boton_verde_presionado.png"
                 on_release: 
                     root.botones_cantidad("suma")
+
+# Quinta pantalla
 <FifthWindow>:
     name: "fifth"
     canvas.before:
@@ -474,18 +486,18 @@ WindowManager:
             pos: self.pos
             size: self.size
 
-    BoxLayout:
+    BoxLayout:  # Contenedor principal vertical
         orientation: 'vertical'
 
-        BoxLayout: 
+        BoxLayout:  # Barra superior que contiene los botones y el título
             orientation: 'horizontal'
             size_hint_y: 0.15
             
-            Widget:
+            Widget: # Espacio en blanco
                 size_hint: (None, None)
                 width: 20
 
-            Button:
+            Button: # Botón para ir atrás a la ventana anterior
                 size_hint: (None, None)
                 height: 50
                 width: 50
@@ -497,13 +509,14 @@ WindowManager:
                 allow_stretch: False
                 keep_ratio: True
                 pos_hint: {"center_y": 0.45}
-                on_press: root.manager.current = 'second'
+                on_press: root.manager.current = 'second' #Regresa a la segunda pantalla
 
-            BoxLayout:
+            BoxLayout: # Contenedor para las etiquetas de texto (Detalles y Factura)
                 size_hint_x: 0.5
                 orientation: 'vertical'
                 pos_hint: {"center_y": 0.45}
-                Label:
+                
+                Label: # Etiqueta para el título 'Detalles'
                     id: detalles_label
                     text: "Detalles"
                     font_size: 20
@@ -514,7 +527,7 @@ WindowManager:
                     padding_x: dp(20) 
                     foreground_color: (255, 255, 255, 1)
                 
-                Label:
+                Label: # Etiqueta de la orden
                     id: factura_label
                     text: "De la orden"
                     font_size: 18
@@ -524,7 +537,7 @@ WindowManager:
                     padding_x: dp(20) 
                     foreground_color: (255, 255, 255, 1)
 
-            Button:
+            Button: # Botón para generar la factura
                 size_hint: (None, None)
                 height: 50
                 width: 150
@@ -541,15 +554,16 @@ WindowManager:
                 pos_hint: {"center_y": 0.45}
                 on_press: root.generar_factura()
             
-            Widget:
+            Widget: # Espacio en blanco
                 size_hint: (None, None)
                 width: 20
         
-        ScrollView:  
+        ScrollView:  # Área de desplazamiento de la pantalla
             bar_width: 0
             scroll_type: ['content']
             size_hint_y: 1
-            GridLayout:
+
+            GridLayout: # Cuadrícula de los elementos dentro del desplazamiento
                 id: layout
                 cols: 1
                 size_hint_y: None
@@ -559,7 +573,7 @@ WindowManager:
                 spacing: dp(20)
                 padding: [20, 10, 20, 10]
 
-        BoxLayout:
+        BoxLayout: # Contenedor para los totales al final de la ventana
             size_hint_y: 0.1
             halign: 'right'
             orientation: 'horizontal'
@@ -573,7 +587,8 @@ WindowManager:
                 padding_x: dp(20) 
                 foreground_color: (255, 255, 255, 1)
                 bold: True
-            Label:
+
+            Label: # Etiqueta para mostrar el total en formato numérico
                 id: precio_total
                 size_hint_x: 0.2
                 text: "$0.00"
@@ -582,6 +597,7 @@ WindowManager:
                 halign: 'right'
                 valign: 'middle'
                 foreground_color: (255, 255, 255, 1)
-            Widget:
+
+            Widget: # Espacio en blanco
                 size_hint: (None, None)
                 width: 20
