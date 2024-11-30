@@ -25,7 +25,7 @@ Window.size = (400, 600)  # Ancho: 400, Alto: 300
 cliente = ""; # Es para guardar el nombre del cliente
 productos = []; # Para guardar la lista de productos que se van a pedir
 
-#
+# Define la ruta base para acceder a las imágenes necesarias en la aplicación
 ruta_imagenes = Path(__file__).parent;
 
 # Esta función permite que se muestren las notificaciones para el usuario
@@ -219,7 +219,7 @@ class FourthWindow(Screen):
         # Permite que se pueda agregar el producto al dar click al botón
         self.ids.boton_enviar.bind(on_press=self.agregar_producto);
     
-    # Función que se ejecuta al salir de la pantalla
+    # Función que se ejecuta al salir de la pantalla. Limpia los datos del producto al cambiar de pantalla para evitar que queden datos inconsistentes
     def on_leave(self):
         # Limpia los datos del producto al cambiar de pantalla
         self.ids.imagen_producto.texture = None;
@@ -301,23 +301,28 @@ class FourthWindow(Screen):
             return False;
 
 class FifthWindow(Screen):
-    productos_factura = [];
+    productos_factura = []; # Lista para almacenar los productos que se incluirán en la factura
 
+    # Esta función se ejecuta al entrar a la pantalla.Limpia los widgets y reconstruye la vista con los productos actuales en el carrito
     def on_enter(self):
-        self.productos_factura = [];
-        scrollview = self.ids.layout.parent;
-        scroll_y = scrollview.scroll_y;
+        self.productos_factura = []; # Reinicia la lista de productos de la factura
+        scrollview = self.ids.layout.parent; # Obtiene el contenedor del layout principal
+        scroll_y = scrollview.scroll_y; # Guarda la posición de desplazamiento actual
 
         # Limpiar widgets previos
         self.ids.layout.clear_widgets();
 
+        # Escribe el precio total en cero
         precio_total = 0;
 
         if len(productos) > 0:
+            # Recorre la lista de productos del carrito y genera los widgets correspondientes
             for i, p in enumerate(productos):
-                data_producto = api.leer_producto(p['id']);
-                data_producto['cantidad'] = p['cantidad'];
+                data_producto = api.leer_producto(p['id']); # Consulta los datos del producto por su id
+                data_producto['cantidad'] = p['cantidad']; # Agrega la cantidad del producto al objeto
                 self.productos_factura.append(data_producto);
+
+                # Crea el diseño del producto con su imagen, nombre, precio y botón de eliminar
                 boton_layout = BoxLayout(orientation="horizontal", size_hint=(0.9, None), height=80);
                 if data_producto['imagen'] != None:
                     img = CoreImage(data_producto['imagen'], ext="png").texture;
@@ -325,6 +330,7 @@ class FifthWindow(Screen):
                     widget_imagen.texture = img;
                     boton_layout.add_widget(widget_imagen);
 
+                # Sección de texto (nombre y cantidad)
                 texto_layout = BoxLayout(orientation="vertical", size_hint=(0.6, 1), pos_hint={"center_y": 0.5}, spacing=0);
                 label_info_producto = Label(text=f"{data_producto['nombre']} - ${data_producto['precio']:,.2f}", size_hint=(1, 0.5), font_size=18, bold= True, halign="left", valign="bottom", text_size=(170, None), color=(1, 1, 1, 1));
                 label_cantidad = Label(text=f"x{p['cantidad']}", size_hint=(1, 0.5), font_size=16, halign="left", valign="top", text_size=(170, None), color=(174/255, 169/255, 169/255, 1));
@@ -333,12 +339,14 @@ class FifthWindow(Screen):
                 texto_layout.add_widget(label_cantidad);
 
                 boton_layout.add_widget(texto_layout);
-
+                
+                # Botón de eliminar producto
                 ruta_basurero = str(ruta_imagenes / "Boton_basurero.png");
                 ruta_basurero_presionado = str(ruta_imagenes / "Boton_basurero_presionado.png");
 
                 boton_basurero = Button(size_hint=(None, None), width=45, height=45, background_normal=ruta_basurero, background_down=ruta_basurero_presionado, pos_hint={"center_y": 0.5});
 
+                # Enlaza el evento del botón al método de eliminación
                 boton_basurero.bind(on_press=lambda instance, posicion=i: self.borrar_producto(instance, posicion));
 
                 boton_layout.add_widget(boton_basurero);
@@ -346,14 +354,21 @@ class FifthWindow(Screen):
                 # Agregar el layout principal al contenedor
                 self.ids.layout.add_widget(boton_layout);
 
+                # Actualiza el precio total
                 precio_total += data_producto['precio'] * p['cantidad'];
+            
+            # Muestra el precio total en el widget correspondiente
             self.ids.precio_total.text = f"${precio_total:,.2f}";
         else:
+            # Mensaje para cuando el carrito está vacío
             label = Label(text="No hay productos en el carrito", font_size=18, color=(1, 1, 1, 1));
             self.ids.layout.add_widget(label);
             self.ids.precio_total.text = "$0.00";
+
+        # Restaura la posición de desplazamiento
         scrollview.scroll_y = scroll_y;
 
+    # Esta función genera un archivo PDF con la factura de los productos en el carrito
     def generar_factura(self):
         global cliente;
         if(len(self.productos_factura) > 0):
@@ -361,11 +376,11 @@ class FifthWindow(Screen):
             fecha_hora_actual = datetime.datetime.now(); #captura la fecha y hora actual
             total = sum(producto['precio'] * producto['cantidad'] for producto in productos); #suma el valor de los productos
             #utilizando libreria para reportes (fpdf
-            pdf = FPDF(orientation='P'); #objeto del pd
-            pdf.add_page(); #agrega una pagin
+            pdf = FPDF(orientation='P'); #objeto del PDF
+            pdf.add_page(); #agrega una página
             pdf.set_font("Arial", size=12); #fuente
-            #Encabezad
-            pdf.image(str(ruta_imagenes / "Logo_notis.png"), x=10, y=8, w=30, h=30); #loguito del sistem
+            #Encabezado
+            pdf.image(str(ruta_imagenes / "Logo_notis.png"), x=10, y=8, w=30, h=30); #logo del sistema
             pdf.set_font("Arial", size=16, style='B'); #fuente
             pdf.cell(200, 10, txt="Factura Electrónica - EatClick", ln=1, align='C'); 
             pdf.cell(200, 10, txt=fecha_hora_actual.strftime("%Y-%m-%d %H:%M:%S"), ln=1, align='C');
@@ -394,11 +409,14 @@ class FifthWindow(Screen):
         ruta_archivo = os.path.join(carpeta_facturas, f"factura_{numero_orden}_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf");
 
         pdf.output(ruta_archivo); #guardamos el pdf
+        
+        # Notificación de éxito y reinicio de variables
         mostrar_noti("Factura creada", "Su factura ha sido creada con éxito!"); #mensaje de exito
         productos.clear();
         cliente = "";
         self.manager.current = 'first'; #regresa al inicio
 
+    # Esta función elimina un producto del carrito y actualiza la vista
     def borrar_producto(self, instance, posicion):
         productos.pop(posicion);
         mostrar_noti("Éxito", "Producto eliminado del carrito");
@@ -413,10 +431,12 @@ class WindowManager(ScreenManager):
 # Designar archivo de diseño .kv
 kv = Builder.load_file('main.kv');
 
+# Esta clase es para el punto de entrada de la aplicación. Ejecuta la instancia de la clase "Eatclick", iniciando la interfaz gráfica
 class Eatclick(App):
     def build(self):
         self.icon = str(ruta_imagenes / "Logo_notis.png");
         return kv;
 
+# Para que pueda correr la aplicación
 if __name__ == '__main__':
     Eatclick().run();
