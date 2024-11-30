@@ -411,7 +411,7 @@ class FifthWindow(Screen):
         pdf.output(ruta_archivo); #guardamos el pdf
 
         # Notificación de éxito y reinicio de variables
-        mostrar_noti("Factura creada", "Su factura ha sido creada con éxito!"); #mensaje de exito
+        mostrar_noti("Factura creada", "¡Ha finalizado su orden con éxito!"); #mensaje de exito
         productos.clear();
         cliente = "";
         self.manager.current = 'first'; #regresa al inicio
