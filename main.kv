@@ -5,7 +5,7 @@
 #:import Factory kivy.factory.Factory
 WindowManager:
 	FirstWindow: # Ventana principal, donde el usuario ingresa su nombre.
-        name: "first" # Define el nombre de la ventana
+        name: "first" # Define el nombre de la primera ventana
 	SecondWindow:
         name: "second" # Segunda ventana de la aplicación.
     ThirdWindow:
@@ -17,7 +17,7 @@ WindowManager:
 
 #Portada. Diseño de la ventana principal (FirstWindow).
 <FirstWindow>:
-    #Colores
+    #Color del fondo
 	canvas.before:
 		Color:
 			rgba: (6/255, 52/255, 91/255, 1)
@@ -26,8 +26,7 @@ WindowManager:
 			pos: self.pos
 			size: self.size
 
-	name: "first"
-    id: layout
+	name: "first" # Asigna el nombre de la ventana para referencia interna.
     
     #Layout: Organiza los elementos en una caja (BoxLayout) con orientación vertical.
     BoxLayout:
@@ -46,20 +45,20 @@ WindowManager:
         # Widget para mostrar un texto (etiqueta).
         Label:
             text: "Bienvenido"
-            size_hint_y: None
-            height: dp(25)
+            size_hint_y: None #Sin altura en porcentaje, especifica
+            height: dp(25) #Altura
             font_size: 28
             bold: True
 
         # Otra etiqueta para mostrar más texto.        
         Label:
             text: "Ingresa un nombre para tu orden"
-            size_hint_y: None
-            height: dp(18)
+            size_hint_y: None #Sin altura en porcentaje, especifica
+            height: dp(18) #Altura
             font_size: 18
             bold: False
 
-        # Widget para el campo de entrada de texto.        
+        # Widget para el input de entrada de texto.        
         TextInput:  # Campo de entrada
             id: nombre_input
             multiline: False  # Solo una línea de texto
@@ -69,32 +68,23 @@ WindowManager:
             foreground_color: (1, 1, 1, 1)  # Color del texto (RGBA)
             font_size: 18  # Tamaño de letra
             padding: [10, 10, 10, 10]  # Padding interno del TextInput
-            size_hint_x: 0.6
-            pos_hint: {"center_x": 0.5}
+            size_hint_x: 0.6 #Tamaño en x en porcentaje (60%)
+            pos_hint: {"center_x": 0.5} #Desplazamiento en x
 
         # Widget para el botón interactivo.
         Button:
             text: "Continuar"
             bold: True
-            size_hint_x: 0.4
-            pos_hint: {"center_x": 0.5}
-            size_hint_y: None
-            height: 50
+            size_hint_x: 0.4 #Tamaño en x en porcentaje (40%)
+            pos_hint: {"center_x": 0.5} #Desplazamiento en x
+            size_hint_y: None #Altura sin porcentaje, especifica
+            height: 50 #Altura
             font_size: 18
             on_release: 
-                root.enviar_nombre()
-            background_normal: "Boton_rojo.png"
-            background_down: "Boton_rojo_presionado.png"
-            canvas.before:
-                # Dibuja un rectángulo con esquinas redondeadas
-                Color:
-                    rgba: self.background_color
-                RoundedRectangle:
-                    pos: self.pos
-                    size: self.size
-                    radius: [20]  # Ajusta el radio para los bordes redondeados
+                root.enviar_nombre() #Funcion al presionar
+            background_normal: "Boton_rojo.png" #Fondo normal
+            background_down: "Boton_rojo_presionado.png" #Fondo presionado
 
-# Diseño de la segunda ventana
 <SecondWindow>:
     canvas.before:
         Color:
@@ -107,21 +97,22 @@ WindowManager:
     BoxLayout: # Organiza los elementos verticalmente dentro de la ventana.
         orientation: 'vertical'
         
+        
         BoxLayout: 
-            orientation: 'horizontal'
+            orientation: 'horizontal' # Subcontenedor para el menu superior
             size_hint_y: 0.15  # Altura del contenedor
             
             BoxLayout:
-                orientation: 'vertical'
+                orientation: 'vertical'  # Subcontenedor para ordenar los textos de forma vertical y agregarlos al layout
                 size_hint_x: 0.85 # 85% del ancho
                 Label: # Etiqueta para "Cliente"
                     id: cliente_label
                     text: "Cliente:"
                     font_size: 20
                     bold: True
-                    halign: 'left'  
-                    valign: 'bottom'  
-                    text_size: self.size 
+                    halign: 'left'   #Orientación horizontal
+                    valign: 'bottom'   #Orientación vertical
+                    text_size: self.size #Esto habilita las orientaciones
                     padding_x: dp(20) 
                     foreground_color: (255, 255, 255, 1)
                 
@@ -129,53 +120,53 @@ WindowManager:
                     id: nombre_label
                     text: ""
                     font_size: 18
-                    halign: 'left'  
-                    valign: 'top'  
-                    text_size: self.size 
+                    halign: 'left'  #Orientación horizontal
+                    valign: 'top'  #Orientación vertical
+                    text_size: self.size #Esto habilita las orientaciones
                     padding_x: dp(20) 
                     foreground_color: (255, 255, 255, 1)
             
             Button: # Botón carrito
-                size_hint: (None, None)
+                size_hint: (None, None) #Sin altura ni ancho en porcentaje, especificos
                 height: 50
                 width: 50
-                background_normal: "Carrito.png"
-                background_down: "Carrito_presionado.png"
-                halign: "center"
-                valign: "top"
-                border: [0, 0, 0, 0]
-                allow_stretch: False
-                keep_ratio: True
-                pos_hint: {"center_y": 0.45}
+                background_normal: "Carrito.png" #Fondo normal
+                background_down: "Carrito_presionado.png" #Fondo presionado
+                halign: "center" #Orientación horizontal
+                valign: "top" #Orientación vertical
+                border: [0, 0, 0, 0] #Sin bordes
+                allow_stretch: False #Esto hace que la imagen no se estire
+                keep_ratio: True #Esto hace que la imagen mantenga sus proporciones originales
+                pos_hint: {"center_y": 0.45} #Desplazamiento en el eje y
                 on_press: root.manager.current = 'fifth' # Cambia a la quinta ventana
             
-            Widget:
-                size_hint: (None, None)
-                width: 20 # Espacio en blanco
+            Widget: # Widget para espacio en blanco
+                size_hint: (None, None) #Sin altura ni ancho en porcentaje, especificos
+                width: 20
         
         ScrollView:  # Sección para el ScrollView (Para el desplazamiento)
-            do_scroll_x: False
-            bar_width: 0
+            do_scroll_x: False #Sin scroll en x
+            bar_width: 0 #Para no mostrar el scroll
             scroll_type: ['content']
-            GridLayout:
+            GridLayout: # Grid layout para cargar los botones dentro de una cuadricula
                 id: layout
-                cols: 2
-                size_hint_y: None
-                height: self.minimum_height
-                row_default_height: dp(150)
-                row_force_default: True
-                spacing: dp(20)
+                cols: 2 #Numero de columnas
+                size_hint_y: None #Sin altura en porcentaje, especifica
+                height: self.minimum_height #Altura según el contenido (aunque toma en cuenta los otros widgets que están en la pantalla)
+                row_default_height: dp(150) #Altura de las filas
+                row_force_default: True #Forzar que todas las filas tengan el mismo tamaño
+                spacing: dp(20) #Espacio entre filas
                 padding: [20, 10, 20, 0]
 
         Label:  # Título "Nota"
             id: nota_label
             text: "Nota:"
             font_size: 20
-            size_hint_y: 0.1
+            size_hint_y: 0.1 #Tamaño en y en porcentaje (10%)
             bold: True
-            halign: 'left'  
-            valign: 'bottom'  
-            text_size: self.size 
+            halign: 'left'  #Orientación horizontal
+            valign: 'bottom'  #Orientación vertical
+            text_size: self.size #Esto habilita las orientaciones
             padding: [20, 0, 20, 5]
             foreground_color: (255, 255, 255, 1)   
         
@@ -183,15 +174,15 @@ WindowManager:
             id: msj_label
             text: "Escoge la categoría o tipo de producto que deseas agregar a tu orden actual."
             font_size: 18
-            size_hint_y: 0.2
-            halign: 'left'  
-            valign: 'top'  
-            text_size: self.size 
+            size_hint_y: 0.2 #Tamaño en y en porcentaje (20%)
+            halign: 'left'   #Orientación horizontal
+            valign: 'top'   #Orientación vertical
+            text_size: self.size #Esto habilita las orientaciones
             padding: [20, 0, 20, 20]
             foreground_color: (255, 255, 255, 1)
 
 <ThirdWindow>:
-    name: "third"
+    name: "third" # Asigna el nombre de la ventana para referencia interna.
     canvas.before:
         Color:
             rgba: (6/255, 52/255, 91/255, 1)  # Color de fondo azul oscuro
@@ -206,25 +197,25 @@ WindowManager:
             orientation: 'horizontal'
             size_hint_y: 0.15  # Altura del contenedor
             
-            Widget:
-                size_hint: (None, None)
+            Widget: #Widget para espacio en blanco
+                size_hint: (None, None) #Sin altura o ancho en porcentajes, especificos
                 width: 20
 
             Button: # Botón retroceso
-                size_hint: (None, None)
+                size_hint: (None, None) #Altura y ancho sin porcentaje, especificas
                 height: 50
                 width: 50
-                background_normal: "Atras.png"
-                background_down: "Atras_presionado.png"
-                halign: "center"
-                valign: "top"
-                border: [0, 0, 0, 0]
-                allow_stretch: False
-                keep_ratio: True
-                pos_hint: {"center_y": 0.45}
+                background_normal: "Atras.png" #Fondo normal
+                background_down: "Atras_presionado.png" #Fondo presionado
+                halign: "center" #Orientación horizontal
+                valign: "top"  #Orientación vertical
+                border: [0, 0, 0, 0] #Sin bordes
+                allow_stretch: False #Hace que la imagen no se estire
+                keep_ratio: True #Hace que la imagen no mantenga sus proporciones originales
+                pos_hint: {"center_y": 0.45} # Acomoda el widget en el eje y
                 on_press: root.manager.current = 'second' # Regresa a la segunda ventana
 
-            BoxLayout:
+            BoxLayout: #Subcontenedor para ordenar los labels en vertical
                 orientation: 'vertical'
                 size_hint_x: 0.85
                 Label: # Etiqueta para "Categoría"
@@ -232,9 +223,9 @@ WindowManager:
                     text: "Categoría:"
                     font_size: 20
                     bold: True
-                    halign: 'center'  
-                    valign: 'bottom'  
-                    text_size: self.size 
+                    halign: 'center'   #Orientación horizontal
+                    valign: 'bottom'  #Orientación vertical
+                    text_size: self.size #Esto habilita las orientaciones
                     padding_x: dp(10) 
                     foreground_color: (255, 255, 255, 1)
                 
@@ -242,39 +233,40 @@ WindowManager:
                     id: categoria_label
                     text: ""
                     font_size: 18
-                    halign: 'center'  
-                    valign: 'top'  
-                    text_size: self.size 
+                    halign: 'center' #Orientación horizontal
+                    valign: 'top'  #Orientación vertical
+                    text_size: self.size #Esto habilita las orientaciones
                     padding_x: dp(10) 
                     foreground_color: (255, 255, 255, 1)
             
             Button: #Botón del carrito
-                size_hint: (None, None)
+                size_hint: (None, None) #Altura y ancho sin porcentajes, especificas
                 height: 50
                 width: 50
-                background_normal: "Carrito.png"
-                background_down: "Carrito_presionado.png"
-                halign: "center"
-                valign: "top"
-                border: [0, 0, 0, 0]
-                allow_stretch: False
-                keep_ratio: True
-                pos_hint: {"center_y": 0.45}
-                on_press: root.manager.current = 'fifth'
+                background_normal: "Carrito.png" #Fondo normal
+                background_down: "Carrito_presionado.png" #Fondo presionado
+                halign: "center" #Orientación horizontal
+                valign: "top" #Orientación vertical
+                border: [0, 0, 0, 0] #Boton sin bordes
+                allow_stretch: False #Hace que la imagen no estire
+                keep_ratio: True #Hace que la imagen mantenga su proporcion original
+                pos_hint: {"center_y": 0.45} #Desplazamiento en el eje y
+                on_press: root.manager.current = 'fifth' #Envia a la quinta pantalla (pantalla del carrito)
             
-            Widget:
+            Widget: # Widget para dejar un espacio
                 size_hint: (None, None)
                 width: 20
         ScrollView:  # Sección para el ScrollView
-            bar_width: 0
+            do_scroll_x: False #Sin scroll en x
+            bar_width: 0 #Para no mostrar el scroll
             scroll_type: ['content']
-            GridLayout:
+            GridLayout: # Grid layout para cargar los botones en una cuadricula
                 id: layout
-                cols: 2
-                size_hint_y: None
-                height: self.minimum_height
-                row_default_height: dp(150)
-                row_force_default: True
+                cols: 2 #Numero de columnas
+                size_hint_y: None #Altura sin porcentaje, especifica
+                height: self.minimum_height #Ajustar el tamaño al contenido (esto toma en cuenta tambien los otros elementos que ocupan espacio del layout)
+                row_default_height: dp(150) #Tamaño de las filas
+                row_force_default: True #Forzar que todas las filas tengan el mismo alto
                 spacing: dp(20)
                 padding: [20, 10, 20, 0]
 
@@ -282,11 +274,11 @@ WindowManager:
             id: nota_label
             text: "Nota:"
             font_size: '20sp'
-            size_hint_y: 0.1
+            size_hint_y: 0.1 #Tamaño en y en porcentaje (10%)
             bold: True
-            halign: 'left'  
-            valign: 'bottom'  
-            text_size: self.size 
+            halign: 'left'  #Orientación horizontal
+            valign: 'bottom'  #Orientación vertical
+            text_size: self.size #Esto activa las orientaciones
             padding: [20, 0, 20, 5]
             foreground_color: (255, 255, 255, 1)   
         
@@ -294,10 +286,10 @@ WindowManager:
             id: msj_label
             text: "Selecciona el producto que deseas agregar a tu orden."
             font_size: '18sp'
-            size_hint_y: 0.2
-            halign: 'left'  
-            valign: 'top'  
-            text_size: self.size 
+            size_hint_y: 0.2 #Tamaño en y en porcentaje (20%)
+            halign: 'left' #Orientación horizontal
+            valign: 'top'  #Orientación vertical
+            text_size: self.size #Esto activa las orientaciones
             padding: [20, 0, 20, 20]
             foreground_color: (255, 255, 255, 1)
 
@@ -310,56 +302,56 @@ WindowManager:
             pos: self.pos
             size: self.size
 
-    BoxLayout:
+    BoxLayout: #Contenedor principal
         orientation: 'vertical'
         id: layout
 
         BoxLayout:  # Contenedor superior con botón de retroceso
             orientation: 'horizontal'
-            size_hint_y: 0.15
+            size_hint_y: 0.15 #Tamaño en y en porcentaje (15%)
             
             Widget: #Espacio en blanco
-                size_hint: (None, None)
+                size_hint: (None, None) #Altura y ancho sin porcentaje, especificos
                 width: 20 
 
             Button: #Botón de retroceso
-                size_hint: (None, None)
+                size_hint: (None, None) #Altura y ancho sin porcentaje, especificos
                 height: 50
                 width: 50
                 background_normal: "Atras.png"
                 background_down: "Atras_presionado.png"
-                halign: "center"
-                valign: "top"
-                border: [0, 0, 0, 0]
-                allow_stretch: False
-                keep_ratio: True
-                pos_hint: {"center_y": 0.45}
+                halign: "center" #Orientación horizontal
+                valign: "top"    #Orientación vertical
+                border: [0, 0, 0, 0] #Sin bordes
+                allow_stretch: False #Hace que la imagen no se estire
+                keep_ratio: True     #Mantiene el tamaño de la imagen original
+                pos_hint: {"center_y": 0.45} #Desplazamiento en el eje Y
                 on_press: root.manager.current = 'second' # Regresa a la segunda ventana
 
             Label: # Título "Detalles del producto"
                 id: detalle_label
-                size_hint_x: 0.85
-                text: "Detalles del producto:"
+                size_hint_x: 0.85 #Tamaño en x en porcentaje (85%)
+                text: "Detalles del producto:" 
                 font_size: 20
                 bold: True
-                halign: 'center'  
-                valign: 'middle'  
-                text_size: self.size 
+                halign: 'center'  #Orientación horizontal
+                valign: 'middle'  #Orientación vertical
+                text_size: self.size #Esto habilita las orientaciones
                 padding_x: dp(10) 
                 foreground_color: (255, 255, 255, 1)
             
             Button: # Botón carrito
-                size_hint: (None, None)
+                size_hint: (None, None) #Altura y ancho sin porcentaje, especificos
                 height: 50
                 width: 50
-                background_normal: "Carrito.png"
-                background_down: "Carrito_presionado.png"
-                halign: "center"
-                valign: "top"
-                border: [0, 0, 0, 0]
-                allow_stretch: False
-                keep_ratio: True
-                pos_hint: {"center_y": 0.45}
+                background_normal: "Carrito.png" #Fondo normal
+                background_down: "Carrito_presionado.png" #Fondo presionado
+                halign: "center" #Orientación horizontal
+                valign: "top" #Orientación vertical
+                border: [0, 0, 0, 0] #Boton sin bordes
+                allow_stretch: False #Hace que la imagen se estire
+                keep_ratio: True #Hace que la imagen mantenga sus proporciones originales
+                pos_hint: {"center_y": 0.45} #Desplazamiento en el eje y
                 on_press: root.manager.current = 'fifth' # Cambia a la quinta ventana
             
             Widget:
@@ -372,9 +364,9 @@ WindowManager:
 
         BoxLayout: # Contenedor de detalles del producto
             orientation: "vertical"
-            size_hint_x: 0.9
+            size_hint_x: 0.9 #Tamaño en x en porcentaje (90%)
             spacing: dp(10)  # Añade un pequeño espacio entre los elementos (puedes ajustarlo)
-            pos_hint: {"center_x": 0.5, "top": 1}
+            pos_hint: {"center_x": 0.5, "top": 1} #Desplazamiento en los ejes x y top para hacer que se posicione lo más alto posible
 
             canvas.before:
                 Color:
@@ -383,58 +375,61 @@ WindowManager:
                     pos: self.pos
                     size: self.size
 
+            Widget: # Espacio en blanco
+                size_hint_y: None #Altura especifica, no porcentaje
+                height: dp(20) #Altura
+
             Label: # Texto del producto
                 id: texto_producto
                 text: ""
                 font_size: 20
                 bold: True
-                halign: 'center'
-                valign: 'middle'
-                size_hint_y: None
+                halign: 'center' #Orientación horizontal
+                valign: 'middle' #Orientación vertical
+                text_size: self.size #Esto habilita las orientaciones
+                size_hint_y: None #Altura sin porcentaje, especifica
                 height: dp(30)
 
             Image: # Imagen del producto
                 id: imagen_producto
                 source: "Default.png"
-                size_hint: (0.9, None) 
-                height: dp(200) 
-                allow_stretch: True
-                pos_hint: {"center_x": 0.5}
+                size_hint: (0.9, None) #Tamaño en x en porcentaje (90%) y altura especifica
+                height: dp(200) #Altura especifica
+                allow_stretch: True #Hace que la imagen se pueda estirar
+                keep_ratio: False #La imagen no conserva sus proporciones originales
+                pos_hint: {"center_x": 0.5} #Desplazamiento en el eje x
 
             Label: # Descripción del producto
                 id: texto_descripcion
                 text: ""
                 font_size: 18
-                halign: 'left'
+                halign: 'center'
                 valign: 'top'
-                size_hint_y: None 
-                height: dp(40)
-                size_hint_x: 0.85
-                text_size: self.size
-                pos_hint: {"center_x": 0.5}
+                size_hint_x: 0.85 #Tamaño en x en porcentaje (85%)
+                text_size: self.size #Habilita las orientaciones
+                pos_hint: {"center_x": 0.5} #Desplazamiento en el eje x
 
             Widget: # Espacio en blanco
-                size_hint_y: None
-                height: dp(70) 
+                size_hint_y: None #Altura especifica, no porcentaje
+                height: dp(70) #Altura
 
         GridLayout: # Botones de acción (Agregar a la orden y cantidad)
-            cols: 4
-            size_hint_y: 0.2
-            size_hint_x: 0.9
-            row_default_height: dp(35)
-            row_force_default: True
-            spacing: dp(5)
+            cols: 4 #Cantidad de columnas
+            size_hint_y: 0.2 #Tamaño en y en porcentaje (20%)
+            size_hint_x: 0.9 #Tamaño en x en porcentaje (90%)
+            row_default_height: dp(35) #Alto de las filas
+            row_force_default: True #Forza que todas las filas tengan el mismo alto
+            spacing: dp(5) #Espacio entre filas
             height: self.minimum_height  # Ajusta la altura al contenido
             padding: [0, 20, 0, 20]
-            pos_hint: {"center_x": 0.5}
+            pos_hint: {"center_x": 0.5} # Desplazamiento en el eje x
 
             Button: # Botón para agregar a la orden
                 id: boton_enviar
                 text: "Agregar a la orden"
                 bold: True 
-                size_hint: (None, None)
+                size_hint: (2, None)  #Tamaño en porcentaje en x y altura fija
                 height: 40
-                size_hint_x: 2
                 background_normal: "Boton_rojo.png"
                 background_down: "Boton_rojo_presionado.png"
                 font_size: 18
@@ -442,39 +437,36 @@ WindowManager:
             Button: # Botón para restar cantidad
                 text: "-"
                 bold: True 
-                size_hint: (None, None)
+                size_hint: (0.5, None)  #Tamaño en porcentaje en x (50%) y altura fija
                 height: 40
                 font_size: 24
-                size_hint_x: 0.5
-                background_normal: "Boton_azul.png"
-                background_down: "Boton_azul_presionado.png"
-                on_release: 
-                    root.botones_cantidad("resta")
+                background_normal: "Boton_azul.png" #Fondo normal
+                background_down: "Boton_azul_presionado.png" #Fondo al presionar
+                on_release:
+                    root.botones_cantidad("resta") #Función al presionar
 
             TextInput: # Input para ingresar la cantidad
                 id: input_cantidad
                 text: "1"
                 font_size: 20
-                halign: "center"
-                valign: "middle"
+                halign: "center" #Orientación horizontal
+                valign: "middle" #Orientación vertical
                 color: 0, 0, 0, 1
                 bold: True 
-                size_hint: (None, None)
+                size_hint: (0.5, None)  #Tamaño en porcentaje en x (50%) y altura fija
                 height: 40
-                size_hint_x: 0.5
                 background_color: (1, 1, 1, 1)
 
             Button: # Botón para sumar cantidad
                 text: "+"
                 bold: True 
                 font_size: 20
-                size_hint: (None, None)
-                height: 40
-                size_hint_x: 0.5
-                background_normal: "Boton_verde.png"
-                background_down: "Boton_verde_presionado.png"
+                size_hint: (0.5, None) #Tamaño en porcentaje en x (50%) y altura fija
+                height: 40 #Altura fija
+                background_normal: "Boton_verde.png" #Fondo normal
+                background_down: "Boton_verde_presionado.png" #Fondo al presionar
                 on_release: 
-                    root.botones_cantidad("suma")
+                    root.botones_cantidad("suma") #Función al presionar
 
 # Quinta pantalla
 <FifthWindow>:
@@ -491,39 +483,39 @@ WindowManager:
 
         BoxLayout:  # Barra superior que contiene los botones y el título
             orientation: 'horizontal'
-            size_hint_y: 0.15
+            size_hint_y: 0.15 #Tamaño en y en porcentaje (15%)
             
             Widget: # Espacio en blanco
                 size_hint: (None, None)
                 width: 20
 
             Button: # Botón para ir atrás a la ventana anterior
-                size_hint: (None, None)
+                size_hint: (None, None) #Alto y ancho sin valor porcentual, con valor especifico
                 height: 50
                 width: 50
                 background_normal: "Atras.png"
                 background_down: "Atras_presionado.png"
-                halign: "center"
-                valign: "top"
+                halign: "center" #Orientación horizontal
+                valign: "top" #Orientación vertical
                 border: [0, 0, 0, 0]
                 allow_stretch: False
                 keep_ratio: True
-                pos_hint: {"center_y": 0.45}
+                pos_hint: {"center_y": 0.5}
                 on_press: root.manager.current = 'second' #Regresa a la segunda pantalla
 
             BoxLayout: # Contenedor para las etiquetas de texto (Detalles y Factura)
-                size_hint_x: 0.5
+                size_hint_x: 0.5 #Tamaño en porcentaje en y (50%)
                 orientation: 'vertical'
-                pos_hint: {"center_y": 0.45}
+                pos_hint: {"center_y": 0.5} #Desplazamiento en el eje Y
                 
                 Label: # Etiqueta para el título 'Detalles'
                     id: detalles_label
                     text: "Detalles"
                     font_size: 20
                     bold: True
-                    halign: 'left'  
-                    valign: 'bottom'  
-                    text_size: self.size 
+                    halign: 'left'  #Orientación horizontal
+                    valign: 'bottom'  #Orientación vertical
+                    text_size: self.size  #Esto habilita las orientaciones
                     padding_x: dp(20) 
                     foreground_color: (255, 255, 255, 1)
                 
@@ -531,27 +523,27 @@ WindowManager:
                     id: factura_label
                     text: "De la orden"
                     font_size: 18
-                    halign: 'left'  
-                    valign: 'top'  
-                    text_size: self.size 
+                    halign: 'left'  #Orientación horizontal
+                    valign: 'top'   #Orientación vertical
+                    text_size: self.size #Esto habilita las orientaciones
                     padding_x: dp(20) 
                     foreground_color: (255, 255, 255, 1)
 
             Button: # Botón para generar la factura
-                size_hint: (None, None)
+                size_hint: (None, None) #Alto y ancho sin valor porcentual, con valor especifico
                 height: 50
                 width: 150
                 text: "Generar factura"
                 bold: True
                 font_size: 18
-                background_normal: "Boton_verde.png"
-                background_down: "Boton_verde_presionado.png"
-                halign: "center"
-                valign: "top"
-                border: [0, 0, 0, 0]
-                allow_stretch: False
-                keep_ratio: True
-                pos_hint: {"center_y": 0.45}
+                background_normal: "Boton_verde.png" #Fondo normal
+                background_down: "Boton_verde_presionado.png" #Fondo al presionar
+                halign: "center" #Orientación horizontal
+                valign: "top" #Orientación vertical
+                border: [0, 0, 0, 0] # Le quita el borde a los botones
+                allow_stretch: False # Esto hace que la imagen no se estire
+                keep_ratio: True # Esto hace que la imagen mantenga su proporción original
+                pos_hint: {"center_y": 0.5} #Desplazamiento en el eje Y
                 on_press: root.generar_factura()
             
             Widget: # Espacio en blanco
@@ -559,43 +551,43 @@ WindowManager:
                 width: 20
         
         ScrollView:  # Área de desplazamiento de la pantalla
-            bar_width: 0
+            do_scroll_x: False #Sin scroll en x
+            bar_width: 0 #Para no mostrar el scroll
             scroll_type: ['content']
-            size_hint_y: 1
+            size_hint_y: 1 #Tamaño en y en porcentaje (100%)
 
             GridLayout: # Cuadrícula de los elementos dentro del desplazamiento
                 id: layout
-                cols: 1
-                size_hint_y: None
-                height: self.minimum_height
-                row_default_height: 80
-                row_force_default: True
-                spacing: dp(20)
+                cols: 1 #Número de columnas
+                size_hint_y: None #Esto es para establecer la altura con un valor y no con porcentaje
+                height: self.minimum_height #Altura minima que puede tener para almacenar los productos (en este caso no se extiende de más por los otros widgets que ocupan el espacio)
+                row_default_height: 80 #Tamaño de las filas
+                row_force_default: True #Esto forza que todas las filas tengan el mismo alto
+                spacing: dp(20) #Espacio entre filas
                 padding: [20, 10, 20, 10]
 
         BoxLayout: # Contenedor para los totales al final de la ventana
-            size_hint_y: 0.1
-            halign: 'right'
+            size_hint_y: 0.1 # Tamaño que ocupa en x en porcentaje (10%)
             orientation: 'horizontal'
             Widget:
                 size_hint_x: 0.65
-            Label:
+            Label: # Label para mostrar la palabra "Total"
                 id: total
-                size_hint_x: 0.15
+                size_hint_x: 0.15 #Tamaño en x en porcentaje (15%)
                 text: "Total:"
                 font_size: 18
                 padding_x: dp(20) 
-                foreground_color: (255, 255, 255, 1)
+                foreground_color: (255, 255, 255, 1) 
                 bold: True
 
             Label: # Etiqueta para mostrar el total en formato numérico
                 id: precio_total
-                size_hint_x: 0.2
+                size_hint_x: 0.2 #Tamaño en x en porcentaje (20%)
                 text: "$0.00"
                 font_size: 18
-                text_size: self.size
-                halign: 'right'
-                valign: 'middle'
+                text_size: self.size #Esto habilita las orientaciones
+                halign: 'right' #Orientación horizontal
+                valign: 'middle' #Orientación vertical
                 foreground_color: (255, 255, 255, 1)
 
             Widget: # Espacio en blanco
